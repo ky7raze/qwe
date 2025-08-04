@@ -77,6 +77,45 @@
       <p>➳❗️<a href="https://t.me/empt1ed_tears" target="_blank" rel="noopener noreferrer">t𝖌</a> | <a href="https://t.me/Music_ky7" target="_blank" rel="noopener noreferrer">𝕸𝖚𝖘𝖎𝖈</a></p>
     </div>
   </div>
+  
+  <!-- 🎵 Фоновая музыка + кнопка -->
+  <audio id="bg-music" loop>
+    <source src="music/music.mp3" type="audio/mpeg" />
+    Ваш браузер не поддерживает аудио.
+  </audio>
+
+  <button id="toggle-music" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    font-size: 14px;
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    border: 1px solid white;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 9999;
+  ">🎵 Музыка: выкл</button>
+
+  <script>
+    const audio = document.getElementById('bg-music');
+    const btn = document.getElementById('toggle-music');
+    let playing = false;
+
+    btn.addEventListener('click', () => {
+      if (!playing) {
+        audio.play();
+        btn.textContent = '🎵 Музыка: вкл';
+      } else {
+        audio.pause();
+        btn.textContent = '🎵 Музыка: выкл';
+      }
+      playing = !playing;
+    });
+  </script>
+  
 </body>
 </html>
+
 
