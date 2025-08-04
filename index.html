@@ -15,7 +15,7 @@
     .container {
       max-width: 900px;
       margin: 40px auto;
-      background-color: rgba(0, 0, 0, 0.7);
+      background-color: rgba(0, 0, 0, 0.7); /* прозрачный чёрный фон */
       padding: 30px;
       box-shadow: 0 0 10px rgba(0,0,0,0.8);
       border-radius: 8px;
@@ -30,12 +30,20 @@
     }
     h1 {
       vertical-align: middle;
+      flex-grow: 1;
     }
     .header-with-avatar {
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-bottom: 30px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
     .header-with-avatar img {
       width: 60px;
@@ -43,6 +51,15 @@
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid white;
+    }
+    #clock {
+      font-size: 1.2rem;
+      background-color: black;
+      padding: 10px 15px;
+      border-radius: 6px;
+      user-select: none;
+      min-width: 100px;
+      text-align: center;
     }
     p {
       line-height: 1.5;
@@ -54,13 +71,36 @@
     a:hover {
       text-decoration: underline;
     }
+    /* Адаптив для мобильных */
+    @media (max-width: 600px) {
+      .container {
+        margin: 20px 10px;
+        padding: 20px;
+      }
+      h1, h2 {
+        padding: 10px 15px;
+        font-size: 1.3rem;
+      }
+      .header-with-avatar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #clock {
+        margin-top: 10px;
+        min-width: auto;
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header-with-avatar">
-      <img src="images/avatar.png" alt="Avatar" />
-      <h1>𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</h1>
+      <div class="header-left">
+        <img src="images/avatar.png" alt="Avatar" />
+        <h1>𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</h1>
+      </div>
+      <div id="clock">00:00:00</div>
     </div>
 
     <div class="section about-me">
@@ -96,7 +136,7 @@
     border-radius: 4px;
     cursor: pointer;
     z-index: 9999;
-  ">🎵 Музыка: выкл</button>
+  ">🎵 Music: off</button>
 
   <!-- Ползунок громкости -->
   <div style="
@@ -127,10 +167,10 @@
     btn.addEventListener('click', () => {
       if (!playing) {
         audio.play();
-        btn.textContent = '🎵 Музыка: вкл';
+        btn.textContent = '🎵 Music: on';
       } else {
         audio.pause();
-        btn.textContent = '🎵 Музыка: выкл';
+        btn.textContent = '🎵 Music: off';
       }
       playing = !playing;
     });
@@ -142,8 +182,21 @@
     // Установить стартовую громкость
     audio.volume = volumeSlider.value;
   </script>
+  <script>
+    function updateClock() {
+      const clock = document.getElementById('clock');
+      const now = new Date();
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      clock.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock(); // сразу показать время
+  </script>
 </body>
 </html>
+
 
 
 
