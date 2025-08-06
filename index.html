@@ -1,15 +1,14 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>𝖎𝖓𝖋𝖔 / 𝖇𝖎𝖔 𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊</title>
   <style>
-    /* Стили из твоего кода */
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: url('images/background.jpg') no-repeat center center fixed;
+      background: url('images/background1.gif') no-repeat center center fixed;
       background-size: cover;
       color: white;
       position: relative;
@@ -39,6 +38,10 @@
       border-radius: 6px;
       margin-top: 0;
       display: inline-block;
+    }
+    h1 {
+      vertical-align: middle;
+      flex-grow: 1;
     }
     .header-with-avatar {
       display: flex;
@@ -78,15 +81,6 @@
     }
     a:hover {
       text-decoration: underline;
-    }
-    .activity-item {
-      margin-top: 10px;
-    }
-    .activity-item img {
-      max-width: 100px;
-      border-radius: 6px;
-      display: block;
-      margin-bottom: 5px;
     }
     @media (max-width: 600px) {
       .container {
@@ -134,19 +128,10 @@
       <p>➳❗️ xd / lol / noway / #отдамсягитаристке</p>
       <p>➳❗️<a href="https://t.me/empt1ed_tears" target="_blank" rel="noopener noreferrer">t𝖌</a> | <a href="https://t.me/Music_ky7" target="_blank" rel="noopener noreferrer">𝕸𝖚𝖘𝖎𝖈</a></p>
     </div>
-
-    <h2>Discord Activity</h2>
-    <div id="discord-content">Загрузка...</div>
-
-    <h2>SoundCloud Activity</h2>
-    <div id="soundcloud-content">Загрузка...</div>
-
-    <h2>Steam Activity</h2>
-    <div id="steam-content">Загрузка...</div>
   </div>
-
+  
   <audio id="bg-music" loop autoplay>
-    <source src="music/music.mp3" type="audio/mpeg" />
+    <source src="music/music1.mp3" type="audio/mpeg" />
   </audio>
 
   <button id="toggle-music" style="
@@ -161,7 +146,7 @@
     border-radius: 4px;
     cursor: pointer;
     z-index: 9999;
-  ">🎵 Music: on</button>
+  ">🎵 Music: off</button>
 
   <div style="
     position: fixed;
@@ -182,7 +167,6 @@
   </div>
 
   <script>
-    // Музыка и кнопка управления
     const audio = document.getElementById('bg-music');
     const btn = document.getElementById('toggle-music');
     const volumeSlider = document.getElementById('volume');
@@ -215,8 +199,9 @@
         if (playing && !userPaused) audio.play();
       }
     });
+  </script>
 
-    // Часы
+  <script>
     function updateClock() {
       const clock = document.getElementById('clock');
       const now = new Date();
@@ -227,8 +212,9 @@
     }
     setInterval(updateClock, 1000);
     updateClock();
+  </script>
 
-    // Сакура на фоне (анимация)
+  <script>
     const canvas = document.getElementById('sakura-canvas');
     const ctx = canvas.getContext('2d');
     let W = window.innerWidth;
@@ -240,135 +226,48 @@
       constructor() { this.reset(); }
       reset() {
         this.x = Math.random() * W;
-        this.y = Math.random() * H;
-        this.size = 10 + Math.random() * 10;
-        this.speedY = 1 + Math.random() * 2;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.angle = Math.random() * Math.PI * 2;
-        this.spin = (Math.random() - 0.5) * 0.02;
-        this.alpha = 0.5 + Math.random() * 0.5;
+        this.y = Math.random() * H - H;
+        this.size = 8 + Math.random() * 7;
+        this.speed = 1 + Math.random() * 1.5;
+        this.angle = Math.random() * 2 * Math.PI;
+        this.angularSpeed = 0.01 + Math.random() * 0.02;
+        this.opacity = 0.5 + Math.random() * 0.5;
       }
       update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        this.angle += this.spin;
+        this.y += this.speed;
+        this.angle += this.angularSpeed;
         if (this.y > H) this.reset();
       }
-      draw() {
+      draw(ctx) {
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.angle);
-        ctx.fillStyle = `rgba(255,182,193,${this.alpha})`;
+        let grad = ctx.createRadialGradient(0, 0, this.size * 0.1, 0, 0, this.size);
+        grad.addColorStop(0, `rgba(255,182,193,${this.opacity})`);
+        grad.addColorStop(1, `rgba(255,105,180,0)`);
+        ctx.fillStyle = grad;
         ctx.beginPath();
-        ctx.moveTo(0, 0);
-        ctx.bezierCurveTo(5, -5, 10, 5, 0, 10);
-        ctx.bezierCurveTo(-10, 5, -5, -5, 0, 0);
+        ctx.ellipse(0, 0, this.size * 0.7, this.size * 1.2, 0, 0, 2 * Math.PI);
         ctx.fill();
         ctx.restore();
       }
     }
-    const petals = [];
-    for (let i = 0; i < 60; i++) {
-      petals.push(new SakuraPetal());
-    }
+
+    const petals = Array.from({length: 60}, () => new SakuraPetal());
     function animate() {
       ctx.clearRect(0, 0, W, H);
-      petals.forEach(p => { p.update(); p.draw(); });
+      petals.forEach(p => { p.update(); p.draw(ctx); });
       requestAnimationFrame(animate);
     }
     animate();
     window.addEventListener('resize', () => {
-      W = window.innerWidth;
-      H = window.innerHeight;
-      canvas.width = W;
-      canvas.height = H;
+      W = window.innerWidth; H = window.innerHeight;
+      canvas.width = W; canvas.height = H;
     });
-
-    // === Discord Activity ===
-    const DISCORD_BOT_TOKEN = "MTE5MjUxNzk2ODQxMjgxNTQxMQ.Gd7tQ-.nhewvditeecCnEyATSRxpbfV6KNX9rWNHCigbM";        // ! Вставь сюда свой Discord Bot Token
-    const DISCORD_USER_ID = "452893455753150481";          // ! Вставь сюда свой Discord User ID
-
-    async function fetchDiscordActivity() {
-      // Пример: использовать Discord API или библиотеку для получения активности
-      // Для демонстрации используем заглушку
-      const discordContent = document.getElementById('discord-content');
-      try {
-        // Тут нужно реальное API взаимодействие
-        // Например, через discord.js или OAuth с backend
-        // Для простоты:
-        discordContent.innerHTML = `
-          <p>Активность Discord для пользователя</p>
-          <p>Статус: На чиле</p>
-          <p>Играет: "DOTA 2"</p>
-        `;
-      } catch (e) {
-        discordContent.textContent = 'Ошибка загрузки Discord активности.';
-      }
-    }
-    fetchDiscordActivity();
-
-    // === SoundCloud Activity ===
-    const SOUNDCLOUD_CLIENT_ID = "14ohwm8W6qaxxnP9HjCxZpu6FcKGACBJ";        // ! Вставь сюда Client ID SoundCloud
-    const SOUNDCLOUD_USER_URL = "https://soundcloud.com/vvzxz-379708698"; // ! Вставь сюда URL своего SoundCloud профиля
-
-    async function fetchSoundCloudActivity() {
-      const soundcloudContent = document.getElementById('soundcloud-content');
-      try {
-        // Для примера используем SoundCloud public API
-        const userResponse = await fetch(`https://api-v2.soundcloud.com/resolve?url=${encodeURIComponent(SOUNDCLOUD_USER_URL)}&client_id=${SOUNDCLOUD_CLIENT_ID}`);
-        if (!userResponse.ok) throw new Error('Ошибка загрузки пользователя SoundCloud');
-        const userData = await userResponse.json();
-
-        const tracksResponse = await fetch(`https://api-v2.soundcloud.com/users/${userData.id}/tracks?client_id=${SOUNDCLOUD_CLIENT_ID}&limit=3`);
-        if (!tracksResponse.ok) throw new Error('Ошибка загрузки треков SoundCloud');
-        const tracksData = await tracksResponse.json();
-
-        soundcloudContent.innerHTML = '';
-        tracksData.collection.forEach(track => {
-          const div = document.createElement('div');
-          div.className = 'activity-item';
-          div.innerHTML = `
-            <img src="${track.artwork_url ? track.artwork_url.replace('-large', '-t500x500') : ''}" alt="Обложка трека" />
-            <p><a href="${track.permalink_url}" target="_blank" rel="noopener noreferrer">${track.title}</a></p>
-          `;
-          soundcloudContent.appendChild(div);
-        });
-      } catch (e) {
-        soundcloudContent.textContent = 'Ошибка загрузки SoundCloud активности.';
-      }
-    }
-    fetchSoundCloudActivity();
-
-    // === Steam Activity ===
-    const STEAM_API_KEY = "3EF12AE262A745E1D24DFB82BE02BF2C";            // ! Вставь сюда Steam API Key
-    const STEAM_ID64 = "76561199042024510";                // ! Вставь сюда Steam64 ID
-
-    async function fetchSteamActivity() {
-      const steamContent = document.getElementById('steam-content');
-      try {
-        const response = await fetch(`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${STEAM_API_KEY}&steamids=${STEAM_ID64}`);
-        if (!response.ok) throw new Error('Ошибка загрузки Steam данных');
-        const data = await response.json();
-
-        if (data.response.players.length === 0) {
-          steamContent.textContent = 'Пользователь Steam не найден.';
-          return;
-        }
-        const player = data.response.players[0];
-        steamContent.innerHTML = `
-          <p><b>${player.personaname}</b></p>
-          <img src="${player.avatarfull}" alt="Steam Avatar" style="border-radius: 6px; max-width: 100px;" />
-          <p>Статус: ${player.personastate === 1 ? 'Онлайн' : 'Оффлайн'}</p>
-          <p><a href="https://steamcommunity.com/profiles/${player.steamid}" target="_blank" rel="noopener noreferrer">Профиль Steam</a></p>
-        `;
-      } catch (e) {
-        steamContent.textContent = 'Ошибка загрузки Steam активности.';
-      }
-    }
-    fetchSteamActivity();
   </script>
 </body>
-        </html>
-                                                                                                       
+  </html>
+  
+
 
 
