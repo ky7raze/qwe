@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
@@ -53,6 +53,11 @@
     }
     .header-left {
       display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .header-left-row {
+      display: flex;
       align-items: center;
       gap: 15px;
     }
@@ -62,6 +67,13 @@
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid white;
+    }
+    #dynamic-status {
+      font-style: italic;
+      font-size: 0.95rem;
+      color: #cccccc;
+      opacity: 0;
+      transition: opacity 1s ease;
     }
     #clock {
       font-size: 1.2rem;
@@ -109,8 +121,11 @@
   <div class="container">
     <div class="header-with-avatar">
       <div class="header-left">
-        <img src="images/avatar.png" alt="Avatar" />
-        <h1>𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</h1>
+        <div class="header-left-row">
+          <img src="images/avatar.png" alt="Avatar" />
+          <h1>𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</h1>
+        </div>
+        <p id="dynamic-status">♪ Загрузка...</p>
       </div>
       <div id="clock">00:00:00</div>
     </div>
@@ -129,9 +144,9 @@
       <p>➳❗️<a href="https://t.me/empt1ed_tears" target="_blank" rel="noopener noreferrer">t𝖌</a> | <a href="https://t.me/Music_ky7" target="_blank" rel="noopener noreferrer">𝕸𝖚𝖘𝖎𝖈</a></p>
     </div>
   </div>
-  
+
   <audio id="bg-music" loop autoplay>
-    <source src="music/music1.mp3" type="audio/mpeg" />
+    <source src="music/eyes.mp3" type="audio/mpeg" />
   </audio>
 
   <button id="toggle-music" style="
@@ -265,9 +280,39 @@
       canvas.width = W; canvas.height = H;
     });
   </script>
+
+  <script>
+    const statusLines = [
+      "В твоих глазах полно любви, а я не могу",
+      "Собрать все мысли, чтобы слов укротить табун",
+      "Мне кажется, что мы во сне, хоть и наяву",
+      "Я вроде бы не на воде, но в тебе тону",
+      "Погасли звёзды, новый день пишет новый шум",
+      "Давай оставим всё как е-есть…",
+      "Меня обводили дети мелками",
+      "На асфальте разноцветных линий пергамент",
+      "Ржавый крик вороны нёс мне ветер, я занят",
+      "Стоп, и я замер. Что-то с глазами",
+      "Ещё минута в тишине, и я закричу",
+      "Твой голос в моей голове — позвоню врачу",
+      "Не удержался на земле, надоело",
+      "Я падаю, и мы падаем",
+    ];
+
+    let currentStatus = 0;
+    const statusElement = document.getElementById("dynamic-status");
+
+    function updateStatusLine() {
+      statusElement.style.opacity = 0;
+      setTimeout(() => {
+        statusElement.textContent = `♪ ${statusLines[currentStatus]}`;
+        statusElement.style.opacity = 1;
+        currentStatus = (currentStatus + 1) % statusLines.length;
+      }, 1000);
+    }
+
+    updateStatusLine();
+    setInterval(updateStatusLine, 10000);
+  </script>
 </body>
-  </html>
-  
-
-
-
+</html>
