@@ -85,12 +85,16 @@
       min-width: 100px;
       text-align: center;
     }
-    p { line-height: 1.5; }
+    p {
+      line-height: 1.5;
+    }
     a {
       color: #a0cfff;
       text-decoration: none;
     }
-    a:hover { text-decoration: underline; }
+    a:hover {
+      text-decoration: underline;
+    }
     @media (max-width: 600px) {
       .container {
         margin: 20px 10px;
@@ -137,7 +141,9 @@
       width: 150px;
       text-align: center;
     }
-    #volume-control label { font-size: 13px; }
+    #volume-control label {
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
@@ -147,7 +153,7 @@
     <div class="header-with-avatar">
       <div class="header-left">
         <div class="header-left-row">
-          <img src="images/ava.jpg" alt="Avatar" />
+          <img src="images/avatar.png" alt="Avatar" />
           <h1>𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</h1>
         </div>
         <p id="dynamic-status">♪ Загрузка...</p>
@@ -171,7 +177,7 @@
   </div>
 
   <audio id="bg-music" loop>
-    <source src="music/ustanu.mp3" type="audio/mpeg" />
+    <source src="music/papap.mp3" type="audio/mpeg" />
   </audio>
 
   <button id="toggle-music">🎵 Music: off</button>
@@ -189,14 +195,18 @@
 
     let playing = false;
     let userPaused = false;
+
     audio.volume = 0.3;
 
+    // Запуск аудио при первом клике по странице (требование браузеров)
     function startAudio() {
       audio.play().then(() => {
         playing = true;
         userPaused = false;
         btn.textContent = '🎵 Music: on';
-      }).catch(() => {});
+      }).catch(() => {
+        // Ошибка воспроизведения, ничего не делаем
+      });
       document.removeEventListener('click', startAudio);
     }
     document.addEventListener('click', startAudio);
@@ -228,6 +238,7 @@
       }
     });
 
+    // Часы
     function updateClock() {
       const clock = document.getElementById('clock');
       const now = new Date();
@@ -239,7 +250,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // 🌸 Сакура-анимация
+    // Сакура анимация
     const canvas = document.getElementById('sakura-canvas');
     const ctx = canvas.getContext('2d');
     let W = window.innerWidth;
@@ -290,7 +301,6 @@
       canvas.width = W; canvas.height = H;
     });
 
-    // 🎵 Статус: f0lk - не устану
     const statusLines = [
       "Я не устану тянуть время",
       "Не устану падать",
@@ -359,12 +369,13 @@
       }
     }
 
-    audio.addEventListener('timeupdate', () => {
+    setInterval(() => {
       if (!audio.paused) {
         updateStatusByTime(audio.currentTime);
       }
-    });
+    }, 500);
 
+    // Показываем первую строку сразу
     statusElement.textContent = `♪ ${statusLines[0]}`;
     statusElement.style.opacity = 1;
   </script>
