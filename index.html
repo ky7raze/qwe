@@ -39,10 +39,7 @@
       margin-top: 0;
       display: inline-block;
     }
-    h1 {
-      vertical-align: middle;
-      flex-grow: 1;
-    }
+    h1 { vertical-align: middle; flex-grow: 1; }
     .header-with-avatar {
       display: flex;
       align-items: center;
@@ -51,16 +48,8 @@
       flex-wrap: wrap;
       justify-content: space-between;
     }
-    .header-left {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .header-left-row {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+    .header-left { display:flex; flex-direction: column; gap:5px; }
+    .header-left-row { display:flex; align-items:center; gap:15px; }
     .header-with-avatar img {
       width: 60px;
       height: 60px;
@@ -85,65 +74,36 @@
       min-width: 100px;
       text-align: center;
     }
-    p {
-      line-height: 1.5;
+    p { line-height:1.5; }
+    a { color: #a0cfff; text-decoration:none; }
+    a:hover { text-decoration: underline; }
+    @media(max-width:600px){
+      .container{margin:20px 10px; padding:20px;}
+      h1,h2{padding:10px 15px; font-size:1.3rem;}
+      .header-with-avatar{flex-direction:column; align-items:flex-start;}
+      #clock{margin-top:10px; min-width:auto; width:100%;}
     }
-    a {
-      color: #a0cfff;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    @media (max-width: 600px) {
-      .container {
-        margin: 20px 10px;
-        padding: 20px;
-      }
-      h1, h2 {
-        padding: 10px 15px;
-        font-size: 1.3rem;
-      }
-      .header-with-avatar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      #clock {
-        margin-top: 10px;
-        min-width: auto;
-        width: 100%;
-      }
-    }
-    #toggle-music {
+    .music-controls {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      padding: 10px 15px;
-      font-size: 14px;
+      display:flex;
+      flex-direction: column;
+      gap:5px;
+      z-index:9999;
+    }
+    .music-controls button, .music-controls input {
+      padding:8px 12px;
+      font-size:14px;
       background-color: rgba(0,0,0,0.7);
-      color: white;
-      border: 1px solid white;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 9999;
+      color:white;
+      border:1px solid white;
+      border-radius:4px;
+      cursor:pointer;
+      width:150px;
+      text-align:center;
     }
-    #volume-control {
-      position: fixed;
-      bottom: 70px;
-      right: 20px;
-      background-color: rgba(0,0,0,0.7);
-      padding: 8px 12px;
-      border: 1px solid white;
-      border-radius: 4px;
-      color: white;
-      font-size: 14px;
-      z-index: 9999;
-      width: 150px;
-      text-align: center;
-    }
-    #volume-control label {
-      font-size: 13px;
-    }
+    .music-controls input { width:100%; }
   </style>
 </head>
 <body>
@@ -162,7 +122,7 @@
     </div>
 
     <div class="section about-me">
-      <h2>𝕬𝖇𝖔𝖚𝖙 𝖒𝖊</h2>
+       <h2>𝕬𝖇𝖔𝖚𝖙 𝖒𝖊</h2>
       <p>➳❗️ 𝕹𝖆𝖒𝖊 - 𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</p>
       <p>➳❗️ 𝒴.𝑜 - 17</p>
       <p>➳❗️𝕲𝖊𝖓𝖉𝖊𝖗 - 𝖒𝖆𝖑𝖊</p>
@@ -176,187 +136,179 @@
     </div>
   </div>
 
-  <audio id="bg-music" loop>
-    <source src="music/f0lk - НЕ УСТАНУ.mp3" type="audio/mpeg" />
-  </audio>
 
-  <button id="toggle-music">🎵 Music: off</button>
-
-  <div id="volume-control">
-    <label for="volume">Volume</label><br />
-    <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
+  <div class="music-controls">
+    <button id="prev-track">⏮ Prev</button>
+    <button id="toggle-music">▶ Music</button>
+    <button id="next-track">⏭ Next</button>
+    <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3">
   </div>
 
+  <audio id="bg-music"></audio>
+
   <script>
-    const audio = document.getElementById('bg-music');
-    const btn = document.getElementById('toggle-music');
-    const volumeSlider = document.getElementById('volume');
-    const statusElement = document.getElementById('dynamic-status');
-
-    let playing = false;
-    let userPaused = false;
-
-    audio.volume = 0.3;
-
-    // Запуск аудио при первом клике по странице (требование браузеров)
-    function startAudio() {
-      audio.play().then(() => {
-        playing = true;
-        userPaused = false;
-        btn.textContent = '🎵 Music: on';
-      }).catch(() => {
-        // Ошибка воспроизведения, ничего не делаем
-      });
-      document.removeEventListener('click', startAudio);
-    }
-    document.addEventListener('click', startAudio);
-
-    btn.addEventListener('click', () => {
-      if (playing) {
-        audio.pause();
-        btn.textContent = '🎵 Music: off';
-        playing = false;
-        userPaused = true;
-      } else {
-        audio.play().then(() => {
-          btn.textContent = '🎵 Music: on';
-          playing = true;
-          userPaused = false;
-        }).catch(() => {});
-      }
-    });
-
-    volumeSlider.addEventListener('input', () => {
-      audio.volume = volumeSlider.value;
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        if (playing) audio.pause();
-      } else {
-        if (playing && !userPaused) audio.play();
-      }
-    });
-
-    // Часы
+    // ---------------- Часы ----------------
     function updateClock() {
       const clock = document.getElementById('clock');
       const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const seconds = now.getSeconds().toString().padStart(2, '0');
-      clock.textContent = `${hours}:${minutes}:${seconds}`;
+      const h = now.getHours().toString().padStart(2,'0');
+      const m = now.getMinutes().toString().padStart(2,'0');
+      const s = now.getSeconds().toString().padStart(2,'0');
+      clock.textContent = `${h}:${m}:${s}`;
     }
-    setInterval(updateClock, 1000);
+    setInterval(updateClock,1000);
     updateClock();
 
-    // Сакура анимация
+    // ---------------- Лепестки ----------------
     const canvas = document.getElementById('sakura-canvas');
     const ctx = canvas.getContext('2d');
-    let W = window.innerWidth;
-    let H = window.innerHeight;
-    canvas.width = W;
-    canvas.height = H;
-
-    class SakuraPetal {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * W;
-        this.y = Math.random() * H - H;
-        this.size = 8 + Math.random() * 7;
-        this.speed = 1 + Math.random() * 1.5;
-        this.angle = Math.random() * 2 * Math.PI;
-        this.angularSpeed = 0.01 + Math.random() * 0.02;
-        this.opacity = 0.5 + Math.random() * 0.5;
-      }
-      update() {
-        this.y += this.speed;
-        this.angle += this.angularSpeed;
-        if (this.y > H) this.reset();
-      }
-      draw(ctx) {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.angle);
-        let grad = ctx.createRadialGradient(0, 0, this.size * 0.1, 0, 0, this.size);
-        grad.addColorStop(0, `rgba(255,182,193,${this.opacity})`);
-        grad.addColorStop(1, `rgba(255,105,180,0)`);
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, this.size * 0.7, this.size * 1.2, 0, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.restore();
-      }
+    let W = window.innerWidth, H = window.innerHeight;
+    canvas.width=W; canvas.height=H;
+    class SakuraPetal{
+      constructor(){this.reset();}
+      reset(){this.x=Math.random()*W; this.y=Math.random()*H-H; this.size=8+Math.random()*7; this.speed=1+Math.random()*1.5; this.angle=Math.random()*2*Math.PI; this.angularSpeed=0.01+Math.random()*0.02; this.opacity=0.5+Math.random()*0.5;}
+      update(){this.y+=this.speed; this.angle+=this.angularSpeed; if(this.y>H)this.reset();}
+      draw(ctx){ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.angle); let grad=ctx.createRadialGradient(0,0,this.size*0.1,0,0,this.size); grad.addColorStop(0,`rgba(255,182,193,${this.opacity})`); grad.addColorStop(1,'rgba(255,105,180,0)'); ctx.fillStyle=grad; ctx.beginPath(); ctx.ellipse(0,0,this.size*0.7,this.size*1.2,0,0,2*Math.PI); ctx.fill(); ctx.restore();}
     }
-
-    const petals = Array.from({length: 60}, () => new SakuraPetal());
-    function animate() {
-      ctx.clearRect(0, 0, W, H);
-      petals.forEach(p => { p.update(); p.draw(ctx); });
-      requestAnimationFrame(animate);
-    }
+    const petals=Array.from({length:60},()=>new SakuraPetal());
+    function animate(){ctx.clearRect(0,0,W,H); petals.forEach(p=>{p.update();p.draw(ctx);}); requestAnimationFrame(animate);}
     animate();
-    window.addEventListener('resize', () => {
-      W = window.innerWidth; H = window.innerHeight;
-      canvas.width = W; canvas.height = H;
+    window.addEventListener('resize',()=>{W=window.innerWidth; H=window.innerHeight; canvas.width=W; canvas.height=H;});
+
+    // ---------------- Плейлист с отдельными статусами ----------------
+    const audio=document.getElementById('bg-music');
+    const toggleBtn=document.getElementById('toggle-music');
+    const prevBtn=document.getElementById('prev-track');
+    const nextBtn=document.getElementById('next-track');
+    const volumeSlider=document.getElementById('volume');
+    const statusElement=document.getElementById('dynamic-status');
+
+    const tracks = [
+      {
+        src:'music/eyes.mp3',
+        statuses:["В твоих глазах полно любви, а я не могу",
+      "Собрать все мысли, чтобы слов укротить табун",
+      "Мне кажется, что мы во сне, хоть и наяву",
+      "Я вроде бы не на воде, но в тебе тону",
+      "В твоих глазах полно любви, а я не могу",
+      "Собрать все мысли, чтобы слов укротить табун",
+      "Погасли звёзды, новый день пишет новый шум",
+      "Давай оставим всё как е-есть…",
+      "Меня обводили дети мелками",
+      "На асфальте разноцветных линий пергамент",
+      "Ржавый крик вороны нёс мне ветер, я занят",
+      "Стоп, и я замер. Что-то с глазами",
+      "Ещё минута в тишине, и я закричу",
+      "Твой голос в моей голове — позвоню врачу",
+      "Не удержался на земле, надоело",
+      "Я падаю, и мы падаем",
+      "Давай оставим всё как есть, я не вывожу"
+    ],
+        timings:[0, 3, 6, 10, 15, 
+      18, 22,
+      26, 29, 32, 35, 39,
+      42, 45, 49, 52]
+      },
+      {
+        src:'music/music3.mp3',
+        statuses:["Ну вот смотри, Артём, она — десять из десяти, но она маленький…",
+    ​"тёмный принц",
+    "Ха-ха-ха-ха",
+  "Папа, па-папа заходит в офис, шалавы в шоке",
+  "Пока папа работал, летели логи",
+  "Папе дайте потрогать тити и жопу",
+  "Папа заходит в офис, папа заводит",
+  "Моя цель — её разрушить",
+  "Дропнул её, как трек в СК — не буду пушить",
+  "Мне не нужна она — знаю, она не лучше",
+  "Факаю тебя в маске, что с улыбкою по уши",
+  "С улыбкою по уши, я воркаю один",
+  "За минуту три лога, да, мои пальцы в крови",
+  "Парень — ебаный лох, ведь ты без скита и айди",
+  "Мне нужен профит, нужен обход Vinted",
+  "Папа, па-папа заходит в офис, шалавы в шоке",
+  "Пока папа работал, летели логи",
+  "Папе дайте потрогать тити и жопу",
+  "Папа заходит в офис, папа заводит",
+  "Папа почистил логи и сделал много",
+  "Папа подделал подписи по дороге",
+  "Папа неаккуратно или немного",
+  "Папает препараты и параноит (Savage!)",
+  "Во мне сейчас бокал вина",
+  "Детка не думала, что свэг идёт ей прямо от меня",
+  "Я просыпаюсь среди ночи ради денег для себя",
+  "Ведь у папы есть семья — я папа 8-1-2",
+  "Папа, па-папа заходит в офис, шалавы в шоке",
+  "Пока папа работал, летели логи",
+  "Папе дайте потрогать тити и жопу",
+  "Папа заходит в офис, папа заводит",
+  "Папа, па-папа, па-па-папа"],
+        timings:[0, 5, 6, 7, 10, 14,
+      16, 19, 21, 24, 27,
+      30, 32, 35, 39, 41,
+      45, 48, 51, 54, 57,
+      60, 63, 67, 68, 71,
+      74, 77, 80, 83, 86,
+      90]
+      },
+    ];
+
+    let currentTrack=0;
+    let playing=false;
+    let lastStatusIndex=-1;
+    let statusLines=tracks[currentTrack].statuses;
+    let statusTimings=tracks[currentTrack].timings;
+
+    function setTrack(index){
+      currentTrack=index;
+      if(currentTrack<0) currentTrack=tracks.length-1;
+      if(currentTrack>=tracks.length) currentTrack=0;
+      audio.src=tracks[currentTrack].src;
+      statusLines=tracks[currentTrack].statuses;
+      statusTimings=tracks[currentTrack].timings;
+      lastStatusIndex=-1;
+      if(playing) playWithFadeIn();
+    }
+
+    function playWithFadeIn(){
+      audio.play().then(()=>{
+        playing=true;
+        toggleBtn.textContent='⏸ Pause';
+        let vol=0; audio.volume=0;
+        const interval=setInterval(()=>{
+          if(vol<volumeSlider.value){vol+=0.01; audio.volume=vol;}
+          else{clearInterval(interval); audio.volume=volumeSlider.value;}
+        },50);
+      }).catch(()=>{});
+    }
+
+    toggleBtn.addEventListener('click',()=>{
+      if(playing){audio.pause(); playing=false; toggleBtn.textContent='▶ Music';}
+      else playWithFadeIn();
     });
 
-   const statusLines = [
- "Я не устану тянуть время","Не устану падать","Пока не услышу шум твоих шагов",
-  "Я думал так и представлял тебя со мною рядом","А оказалось что ошибиться мог",
-  "Но это не нужно мне нахуй","Но хотел вернуть всё обратно","Но эти обиженные взгляды",
-  "Заставляют думать зачем это надо","Зачем это надо, зачем это надо","Зачем это надо, зачем это надо",
-  "Я говорил что не устану, но устал","Мне кажется жизнь расставит всё сама по местам",
-  "А ты сейчас где-то там, ты где-то там","С кем-то там, с трепетом к нему, с трепетом",
-  "Ммм, как же я заебался, думать о шансе","Этом последнем шансе","Ммм, кто-то из нас не старался, не пошевелил пальцем",
-  "Не пошевелил пальцем","Кто же это был, сейчас решим","Это тот кричал кто из всех сил",
-  "Те самые слова те самые строчки","А после говорил, что это не нарочно","Это не нарочно, это не нарочно",
-  "Это не нарочно, это не нарочно","Я не устану тянуть время","Не устану падать","Пока не услышу шум твоих шагов",
-  "Я думал так и представлял тебя со мною рядом","А оказалось что ошибиться мог","Но это не нужно мне нахуй",
-  "Но хотел вернуть всё обратно","Но эти обиженные взгляды","Заставляют думать зачем это надо","-"
-];
+    prevBtn.addEventListener('click',()=>setTrack(currentTrack-1));
+    nextBtn.addEventListener('click',()=>setTrack(currentTrack+1));
+    volumeSlider.addEventListener('input',()=>{audio.volume=volumeSlider.value;});
 
-const statusTimings = [
-  11,13,15,18,21,23,26,30,33,36,42,48,51,54,56,60,65,67,70,
-  73,76,78,81,82,90,95,98,100,102,105,108,110,114,116,120
-];
-
-    let lastStatusIndex = -1;
-
-    function updateStatusByTime(currentTime) {
-      let index = 0;
-      for (let i = 0; i < statusTimings.length; i++) {
-        if (currentTime >= statusTimings[i]) {
-          index = i;
-        } else {
-          break;
+    audio.addEventListener('ended',()=>setTrack(currentTrack+1));
+    audio.addEventListener('timeupdate',()=>{
+      if(!audio.paused){
+        let index=0;
+        for(let i=0;i<statusTimings.length;i++){if(audio.currentTime>=statusTimings[i]) index=i; else break;}
+        if(index!==lastStatusIndex){
+          lastStatusIndex=index;
+          statusElement.style.opacity=0;
+          setTimeout(()=>{statusElement.textContent=statusLines[index]; statusElement.style.opacity=1;},300);
         }
       }
-      if (index !== lastStatusIndex) {
-        lastStatusIndex = index;
-        statusElement.style.opacity = 0;
-        setTimeout(() => {
-          statusElement.textContent = `♪ ${statusLines[index]}`;
-          statusElement.style.opacity = 1;
-        }, 300);
-      }
-    }
+    });
 
-    setInterval(() => {
-      if (!audio.paused) {
-        updateStatusByTime(audio.currentTime);
-      }
-    }, 500);
+    statusElement.textContent=statusLines[0];
+    statusElement.style.opacity=1;
 
-    // Показываем первую строку сразу
-    statusElement.textContent = `♪ ${statusLines[0]}`;
-    statusElement.style.opacity = 1;
   </script>
 </body>
 </html>
-
-
-
-
 
 
