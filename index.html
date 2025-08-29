@@ -151,7 +151,7 @@
       }).catch(() => {});
     }
 
-    // Multi-layer audio visualizer around avatar
+    // Single-layer audio visualizer around avatar
     const avatarCanvas = document.createElement('canvas');
     avatarCanvas.width = avatar.offsetWidth + 40;
     avatarCanvas.height = avatar.offsetHeight + 40;
@@ -167,7 +167,7 @@
     const analyser = audioCtx.createAnalyser();
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
-    analyser.fftSize = 128;
+    analyser.fftSize = 64;
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
@@ -176,15 +176,12 @@
       if (playing) {
         analyser.getByteFrequencyData(dataArray);
         const avg = dataArray.reduce((a,b)=>a+b,0)/dataArray.length;
-        const layers = 3;
-        for (let i = 0; i < layers; i++) {
-          const radius = avatar.offsetWidth/2 + 10 + i*10 + avg/5;
-          ctx.beginPath();
-          ctx.arc(avatarCanvas.width/2, avatarCanvas.height/2, radius, 0, 2*Math.PI);
-          ctx.strokeStyle = `rgba(255,105,180,${0.3 + i*0.2})`;
-          ctx.lineWidth = 2;
-          ctx.stroke();
-        }
+        const radius = avatar.offsetWidth/2 + 15 + avg/5;
+        ctx.beginPath();
+        ctx.arc(avatarCanvas.width/2, avatarCanvas.height/2, radius, 0, 2*Math.PI);
+        ctx.strokeStyle = `rgba(255,105,180,0.5)`;
+        ctx.lineWidth = 3;
+        ctx.stroke();
       }
       requestAnimationFrame(drawVisualizer);
     }
