@@ -13,6 +13,7 @@
       color: white;
       position: relative;
       overflow-x: hidden;
+      cursor: none;
     }
     #sakura-canvas {
       position: fixed;
@@ -39,7 +40,7 @@
       margin-top: 0;
       display: inline-block;
     }
-    h1 { vertical-align: middle; flex-grow: 1; }
+    h1 { vertical-align: middle; flex-grow: 1; position: relative; }
     .header-with-avatar {
       display: flex;
       align-items: center;
@@ -50,13 +51,15 @@
       position: relative;
     }
     .header-left { display: flex; flex-direction: column; gap: 5px; }
-    .header-left-row { display: flex; align-items: center; gap: 15px; position: relative; }
-    #avatar {
+    .header-left-row { display: flex; align-items: center; gap: 15px; }
+    .header-with-avatar img {
       width: 100px;
       height: 100px;
       border-radius: 50%;
       object-fit: cover;
       border: 2px solid white;
+      position: relative;
+      z-index: 2;
     }
     #dynamic-status { font-style: italic; font-size: 0.95rem; color: #cccccc; opacity: 0; transition: opacity 0.5s ease; min-height: 1.4em; }
     #clock { font-size: 1.2rem; background-color: black; padding: 10px 15px; border-radius: 6px; user-select: none; min-width: 100px; text-align: center; }
@@ -77,6 +80,71 @@
       position: fixed; bottom: 70px; right: 20px; background-color: rgba(0,0,0,0.7); padding: 8px 12px; border: 1px solid white; border-radius: 4px; color: white; font-size: 14px; z-index: 9999; width: 150px; text-align: center;
     }
     #volume-control label { font-size: 13px; }
+
+    /* Glitch Text */
+    .glitch {
+      position: relative;
+      color: white;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      left: 0; top: 0;
+      width: 100%;
+      background: transparent;
+      overflow: hidden;
+    }
+    .glitch::before {
+      left: 2px;
+      text-shadow: -2px 0 red;
+      clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%);
+      animation: glitchAnimTop 2s infinite linear alternate-reverse;
+    }
+    .glitch::after {
+      left: -2px;
+      text-shadow: -2px 0 cyan;
+      clip-path: polygon(0 67%, 100% 67%, 100% 100%, 0 100%);
+      animation: glitchAnimBottom 2s infinite linear alternate-reverse;
+    }
+    @keyframes glitchAnimTop {
+      0% { transform: translate(0,0); }
+      20% { transform: translate(-2px,-2px); }
+      40% { transform: translate(2px,2px); }
+      60% { transform: translate(-2px,1px); }
+      80% { transform: translate(2px,-1px); }
+      100% { transform: translate(0,0); }
+    }
+    @keyframes glitchAnimBottom {
+      0% { transform: translate(0,0); }
+      20% { transform: translate(2px,2px); }
+      40% { transform: translate(-2px,-2px); }
+      60% { transform: translate(1px,-2px); }
+      80% { transform: translate(-1px,2px); }
+      100% { transform: translate(0,0); }
+    }
+
+    /* Glitch cursor */
+    #glitch-cursor {
+      position: fixed;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: white;
+      pointer-events: none;
+      mix-blend-mode: difference;
+      animation: glitchCursor 1s infinite;
+      z-index: 99999;
+    }
+    @keyframes glitchCursor {
+      0% { transform: translate(0,0); background-color: white; }
+      25% { transform: translate(-2px,1px); background-color: cyan; }
+      50% { transform: translate(2px,-1px); background-color: magenta; }
+      75% { transform: translate(-1px,2px); background-color: yellow; }
+      100% { transform: translate(0,0); background-color: white; }
+    }
   </style>
 </head>
 <body>
@@ -86,8 +154,8 @@
     <div class="header-with-avatar">
       <div class="header-left">
         <div class="header-left-row">
-          <img src="images/ava.jpg" alt="Avatar" id="avatar" />
-          <h1>𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</h1>
+          <img src="images/ava.jpg" alt="Avatar" />
+          <h1 class="glitch" data-text="𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉">𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</h1>
         </div>
         <p id="dynamic-status">♪ Загрузка...</p>
       </div>
@@ -114,24 +182,24 @@
   </audio>
 
   <button id="toggle-music">🎵 Music: off</button>
-
   <div id="volume-control">
     <label for="volume">Volume</label><br />
     <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
   </div>
 
+  <div id="glitch-cursor"></div>
+
   <script>
+    // ===== AUDIO & VISUALIZER =====
     const audio = document.getElementById('bg-music');
     const btn = document.getElementById('toggle-music');
     const volumeSlider = document.getElementById('volume');
-    const avatar = document.getElementById('avatar');
+    const avatar = document.querySelector('.header-with-avatar img');
     const statusElement = document.getElementById('dynamic-status');
     let playing = false;
     let userPaused = false;
-
     audio.volume = 0;
 
-    // Fade-in audio
     function fadeInAudio(duration = 3000) {
       audio.volume = 0;
       audio.play().then(() => {
@@ -142,22 +210,19 @@
         const intervalTime = duration * step;
         const fadeInterval = setInterval(() => {
           vol += step;
-          if (vol >= volumeSlider.value) {
-            vol = volumeSlider.value;
-            clearInterval(fadeInterval);
-          }
+          if (vol >= volumeSlider.value) { vol = volumeSlider.value; clearInterval(fadeInterval);}
           audio.volume = vol;
         }, intervalTime);
       }).catch(() => {});
     }
 
-    // Single-layer audio visualizer around avatar
+    // Visualizer around avatar
     const avatarCanvas = document.createElement('canvas');
-    avatarCanvas.width = avatar.offsetWidth + 40;
-    avatarCanvas.height = avatar.offsetHeight + 40;
+    avatarCanvas.width = avatar.offsetWidth + 20;
+    avatarCanvas.height = avatar.offsetHeight + 20;
     avatarCanvas.style.position = 'absolute';
-    avatarCanvas.style.left = (avatar.offsetLeft - 20) + 'px';
-    avatarCanvas.style.top = (avatar.offsetTop - 20) + 'px';
+    avatarCanvas.style.left = (avatar.offsetLeft - 10) + 'px';
+    avatarCanvas.style.top = (avatar.offsetTop - 10) + 'px';
     avatarCanvas.style.pointerEvents = 'none';
     avatar.parentElement.appendChild(avatarCanvas);
     const ctx = avatarCanvas.getContext('2d');
@@ -176,7 +241,7 @@
       if (playing) {
         analyser.getByteFrequencyData(dataArray);
         const avg = dataArray.reduce((a,b)=>a+b,0)/dataArray.length;
-        const radius = avatar.offsetWidth/2 + 15 + avg/5;
+        const radius = 50 + avg/5;
         ctx.beginPath();
         ctx.arc(avatarCanvas.width/2, avatarCanvas.height/2, radius, 0, 2*Math.PI);
         ctx.strokeStyle = `rgba(255,105,180,0.5)`;
@@ -187,38 +252,14 @@
     }
     drawVisualizer();
 
-    window.addEventListener('resize', () => {
-      avatarCanvas.width = avatar.offsetWidth + 40;
-      avatarCanvas.height = avatar.offsetHeight + 40;
-      avatarCanvas.style.left = (avatar.offsetLeft - 20) + 'px';
-      avatarCanvas.style.top = (avatar.offsetTop - 20) + 'px';
-    });
-
-    document.addEventListener('click', () => {
-      if (!playing) {
-        audioCtx.resume();
-        fadeInAudio();
-      }
-    });
-
+    document.addEventListener('click', () => { if (!playing) { audioCtx.resume(); fadeInAudio(); } });
     btn.addEventListener('click', () => {
-      if (playing) {
-        audio.pause();
-        btn.textContent = '🎵 Music: off';
-        playing = false;
-        userPaused = true;
-      } else {
-        audioCtx.resume();
-        fadeInAudio();
-        userPaused = false;
-      }
+      if (playing) { audio.pause(); btn.textContent='🎵 Music: off'; playing=false; userPaused=true; }
+      else { audioCtx.resume(); fadeInAudio(); userPaused=false; }
     });
+    volumeSlider.addEventListener('input', () => { audio.volume = volumeSlider.value; });
 
-    volumeSlider.addEventListener('input', () => {
-      audio.volume = volumeSlider.value;
-    });
-
-    // Clock
+    // ===== CLOCK =====
     function updateClock() {
       const clock = document.getElementById('clock');
       const now = new Date();
@@ -230,39 +271,36 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Sakura animation
+    // ===== SAKURA =====
     const canvas = document.getElementById('sakura-canvas');
     const ctxSakura = canvas.getContext('2d');
     let W = window.innerWidth, H = window.innerHeight;
     canvas.width = W; canvas.height = H;
 
-    class SakuraPetal {
-      constructor(){this.reset();}
-      reset(){this.x=Math.random()*W; this.y=Math.random()*H-H; this.size=8+Math.random()*7; this.speed=1+Math.random()*1.5; this.angle=Math.random()*2*Math.PI; this.angularSpeed=0.01+Math.random()*0.02; this.opacity=0.5+Math.random()*0.5;}
-      update(){this.y+=this.speed; this.angle+=this.angularSpeed; if(this.y>H)this.reset();}
-      draw(ctx){ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.angle); let grad=ctx.createRadialGradient(0,0,this.size*0.1,0,0,this.size); grad.addColorStop(0,`rgba(255,182,193,${this.opacity})`); grad.addColorStop(1,`rgba(255,105,180,0)`); ctx.fillStyle=grad; ctx.beginPath(); ctx.ellipse(0,0,this.size*0.7,this.size*1.2,0,0,2*Math.PI); ctx.fill(); ctx.restore();}
-    }
+    class SakuraPetal {constructor(){this.reset();} reset(){this.x=Math.random()*W;this.y=Math.random()*H-H;this.size=8+Math.random()*7;this.speed=1+Math.random()*1.5;this.angle=Math.random()*2*Math.PI;this.angularSpeed=0.01+Math.random()*0.02;this.opacity=0.5+Math.random()*0.5;} update(){this.y+=this.speed;this.angle+=this.angularSpeed;if(this.y>H)this.reset();} draw(ctx){ctx.save();ctx.translate(this.x,this.y);ctx.rotate(this.angle);let grad=ctx.createRadialGradient(0,0,this.size*0.1,0,0,this.size);grad.addColorStop(0,`rgba(255,182,193,${this.opacity})`);grad.addColorStop(1,`rgba(255,105,180,0)`);ctx.fillStyle=grad;ctx.beginPath();ctx.ellipse(0,0,this.size*0.7,this.size*1.2,0,0,2*Math.PI);ctx.fill();ctx.restore();}}
     const petals = Array.from({length:60},()=>new SakuraPetal());
-    function animate(){ctxSakura.clearRect(0,0,W,H); petals.forEach(p=>{p.update(); p.draw(ctxSakura);}); requestAnimationFrame(animate);}
+    function animate(){ctxSakura.clearRect(0,0,W,H); petals.forEach(p=>{p.update();p.draw(ctxSakura);}); requestAnimationFrame(animate);}
     animate();
-    window.addEventListener('resize',()=>{W=window.innerWidth; H=window.innerHeight; canvas.width=W; canvas.height=H;});
+    window.addEventListener('resize',()=>{W=window.innerWidth;H=window.innerHeight;canvas.width=W;canvas.height=H;});
 
-    // Dynamic status
+    // ===== DYNAMIC STATUS =====
     const statusLines = ["-","Я не устану тянуть время","Не устану падать","Пока не услышу шум твоих шагов"];
     const statusTimings = [0,11,13,15];
     let lastStatusIndex=-1;
     function updateStatusByTime(currentTime){
       let index=0;
       for(let i=0;i<statusTimings.length;i++){if(currentTime>=statusTimings[i]) index=i; else break;}
-      if(index!==lastStatusIndex){
-        lastStatusIndex=index;
-        statusElement.style.opacity=0;
-        setTimeout(()=>{statusElement.textContent=`♪ ${statusLines[index]}`; statusElement.style.opacity=1;},300);
-      }
+      if(index!==lastStatusIndex){lastStatusIndex=index;statusElement.style.opacity=0; setTimeout(()=>{statusElement.textContent=`♪ ${statusLines[index]}`; statusElement.style.opacity=1;},300);}
     }
     setInterval(()=>{if(!audio.paused) updateStatusByTime(audio.currentTime);},500);
     statusElement.textContent=`♪ ${statusLines[0]}`; statusElement.style.opacity=1;
 
+    // ===== GLITCH CURSOR =====
+    const cursor = document.getElementById('glitch-cursor');
+    document.addEventListener('mousemove', e => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
   </script>
 </body>
 </html>
