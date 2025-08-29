@@ -50,12 +50,15 @@
       position: relative;
     }
     .header-left { display: flex; flex-direction: column; gap: 5px; }
-    .header-left-row { display: flex; align-items: center; gap: 15px; }
-    .header-with-avatar img {
-      width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid white;
+    .header-left-row { display: flex; align-items: center; gap: 15px; position: relative; }
+    #avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
     }
     #dynamic-status { font-style: italic; font-size: 0.95rem; color: #cccccc; opacity: 0; transition: opacity 0.5s ease; min-height: 1.4em; }
-    #quote { font-style: italic; text-align:center; color:#ffc; margin-top:10px; opacity:0; transition: opacity 0.5s ease; min-height:1.4em; }
     #clock { font-size: 1.2rem; background-color: black; padding: 10px 15px; border-radius: 6px; user-select: none; min-width: 100px; text-align: center; }
     p { line-height: 1.5; }
     a { color: #a0cfff; text-decoration: none; }
@@ -83,11 +86,10 @@
     <div class="header-with-avatar">
       <div class="header-left">
         <div class="header-left-row">
-          <img src="images/ava.jpg" alt="Avatar" />
+          <img src="images/ava.jpg" alt="Avatar" id="avatar" />
           <h1>𝖐𝖑𝖔𝖓𝖉𝖎𝖐𝖊 / 𝖉𝖎𝖊𝖉 / 𝖜0𝖚𝖓𝖉</h1>
         </div>
         <p id="dynamic-status">♪ Загрузка...</p>
-        <p id="quote">...</p>
       </div>
       <div id="clock">00:00:00</div>
     </div>
@@ -119,18 +121,17 @@
   </div>
 
   <script>
-    // ===== AUDIO & VISUALIZER =====
     const audio = document.getElementById('bg-music');
     const btn = document.getElementById('toggle-music');
     const volumeSlider = document.getElementById('volume');
-    const avatar = document.querySelector('.header-with-avatar img');
+    const avatar = document.getElementById('avatar');
     const statusElement = document.getElementById('dynamic-status');
-    const quoteElement = document.getElementById('quote');
     let playing = false;
     let userPaused = false;
 
     audio.volume = 0;
 
+    // Fade-in audio
     function fadeInAudio(duration = 3000) {
       audio.volume = 0;
       audio.play().then(() => {
@@ -150,12 +151,13 @@
       }).catch(() => {});
     }
 
+    // Multi-layer audio visualizer around avatar
     const avatarCanvas = document.createElement('canvas');
-    avatarCanvas.width = avatar.offsetWidth + 20;
-    avatarCanvas.height = avatar.offsetHeight + 20;
+    avatarCanvas.width = avatar.offsetWidth + 40;
+    avatarCanvas.height = avatar.offsetHeight + 40;
     avatarCanvas.style.position = 'absolute';
-    avatarCanvas.style.left = (avatar.offsetLeft - 10) + 'px';
-    avatarCanvas.style.top = (avatar.offsetTop - 10) + 'px';
+    avatarCanvas.style.left = (avatar.offsetLeft - 20) + 'px';
+    avatarCanvas.style.top = (avatar.offsetTop - 20) + 'px';
     avatarCanvas.style.pointerEvents = 'none';
     avatar.parentElement.appendChild(avatarCanvas);
     const ctx = avatarCanvas.getContext('2d');
@@ -165,7 +167,7 @@
     const analyser = audioCtx.createAnalyser();
     source.connect(analyser);
     analyser.connect(audioCtx.destination);
-    analyser.fftSize = 64;
+    analyser.fftSize = 128;
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
@@ -174,16 +176,26 @@
       if (playing) {
         analyser.getByteFrequencyData(dataArray);
         const avg = dataArray.reduce((a,b)=>a+b,0)/dataArray.length;
-        const radius = 30 + avg/5;
-        ctx.beginPath();
-        ctx.arc(avatarCanvas.width/2, avatarCanvas.height/2, radius, 0, 2*Math.PI);
-        ctx.strokeStyle = `rgba(255,105,180,0.5)`;
-        ctx.lineWidth = 3;
-        ctx.stroke();
+        const layers = 3;
+        for (let i = 0; i < layers; i++) {
+          const radius = avatar.offsetWidth/2 + 10 + i*10 + avg/5;
+          ctx.beginPath();
+          ctx.arc(avatarCanvas.width/2, avatarCanvas.height/2, radius, 0, 2*Math.PI);
+          ctx.strokeStyle = `rgba(255,105,180,${0.3 + i*0.2})`;
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
       }
       requestAnimationFrame(drawVisualizer);
     }
     drawVisualizer();
+
+    window.addEventListener('resize', () => {
+      avatarCanvas.width = avatar.offsetWidth + 40;
+      avatarCanvas.height = avatar.offsetHeight + 40;
+      avatarCanvas.style.left = (avatar.offsetLeft - 20) + 'px';
+      avatarCanvas.style.top = (avatar.offsetTop - 20) + 'px';
+    });
 
     document.addEventListener('click', () => {
       if (!playing) {
@@ -209,7 +221,7 @@
       audio.volume = volumeSlider.value;
     });
 
-    // ===== CLOCK =====
+    // Clock
     function updateClock() {
       const clock = document.getElementById('clock');
       const now = new Date();
@@ -221,7 +233,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // ===== SAKURA ANIMATION =====
+    // Sakura animation
     const canvas = document.getElementById('sakura-canvas');
     const ctxSakura = canvas.getContext('2d');
     let W = window.innerWidth, H = window.innerHeight;
@@ -238,52 +250,22 @@
     animate();
     window.addEventListener('resize',()=>{W=window.innerWidth; H=window.innerHeight; canvas.width=W; canvas.height=H;});
 
-    // ===== DYNAMIC STATUS =====
-    const statusLines = [ "-", "Я не устану тянуть время","Не устану падать","Пока не услышу шум твоих шагов","Я думал так и представлял тебя со мною рядом","А оказалось что ошибиться мог","Но это не нужно мне нахуй","Но хотел вернуть всё обратно","Но эти обиженные взгляды","Заставляют думать зачем это надо","Зачем это надо, зачем это надо","Зачем это надо, зачем это надо","Я говорил что не устану, но устал","Мне кажется жизнь расставит всё сама по местам","А ты сейчас где-то там, ты где-то там","С кем-то там, с трепетом к нему, с трепетом","Ммм, как же я заебался, думать о шансе","Этом последнем шансе","Ммм, кто-то из нас не старался, не пошевелил пальцем","Не пошевелил пальцем","Кто же это был, сейчас решим","Это тот кричал кто из всех сил","Те самые слова те самые строчки","А после говорил, что это не нарочно","Это не нарочно, это не нарочно","Это не нарочно, это не нарочно","Я не устану тянуть время","Не устану падать","Пока не услышу шум твоих шагов","Я думал так и представлял тебя со мною рядом","А оказалось что ошибиться мог","Но это не нужно мне нахуй","Но хотел вернуть всё обратно","Но эти обиженные взгляды","Заставляют думать зачем это надо","-"];
-    const statusTimings = [0,11,13,15,18,21,23,26,30,33,36,42,48,51,54,56,60,65,67,70,73,76,78,81,82,90,95,98,100,102,105,108,110,114,116,120];
+    // Dynamic status
+    const statusLines = ["-","Я не устану тянуть время","Не устану падать","Пока не услышу шум твоих шагов"];
+    const statusTimings = [0,11,13,15];
     let lastStatusIndex=-1;
-
     function updateStatusByTime(currentTime){
       let index=0;
-      for(let i=0;i<statusTimings.length;i++){
-        if(currentTime>=statusTimings[i]) index=i;
-        else break;
-      }
+      for(let i=0;i<statusTimings.length;i++){if(currentTime>=statusTimings[i]) index=i; else break;}
       if(index!==lastStatusIndex){
         lastStatusIndex=index;
         statusElement.style.opacity=0;
         setTimeout(()=>{statusElement.textContent=`♪ ${statusLines[index]}`; statusElement.style.opacity=1;},300);
       }
     }
-
     setInterval(()=>{if(!audio.paused) updateStatusByTime(audio.currentTime);},500);
     statusElement.textContent=`♪ ${statusLines[0]}`; statusElement.style.opacity=1;
 
-    // ===== QUOTES =====
-    const quotes = [
-      "Ха, кто-то хапнул горя, кто-то хапнул бабок",
-      "Кто то хавал таблы и теперь от рехаба к рехабу",
-      "Поздравляю, ты хапнул травку",
-      "И теперь можно сказать, что ты попал или попался в капкан",
-      "К чёрту финансы"
-    ];
-
-    let currentQuoteIndex = 0;
-
-    function showQuote(index) {
-      quoteElement.style.opacity = 0;
-      setTimeout(() => {
-        quoteElement.textContent = quotes[index];
-        quoteElement.style.opacity = 1;
-      }, 300);
-    }
-
-    setInterval(() => {
-      currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
-      showQuote(currentQuoteIndex);
-    }, 8000);
-
-    showQuote(currentQuoteIndex);
   </script>
 </body>
 </html>
