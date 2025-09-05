@@ -270,12 +270,12 @@
   class BloodDrop {
     constructor() { this.reset(); }
     reset() {
-      this.x = Math.random() * W;
-      this.y = Math.random() * -H;
-      this.radius = 2 + Math.random() * 4;
-      this.speed = 2 + Math.random() * 3;
-      this.opacity = 0.6 + Math.random() * 0.4;
-      this.exploded = false;
+  this.x = Math.random() * W;
+  this.y = Math.random() * -H;
+  this.radius = 4 + Math.random() * 6; // капли крупнее (от 4 до 10px)
+  this.speed = 2 + Math.random() * 3;
+  this.opacity = 0.6 + Math.random() * 0.4;
+  this.exploded = false;
     }
     update() {
       if (!this.exploded) {
@@ -415,5 +415,6 @@ const statusTimings = [
   </script>
 </body>
 </html>
+
 
 
