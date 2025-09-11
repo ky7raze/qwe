@@ -205,32 +205,34 @@
     track.connect(gainNode).connect(audioCtx.destination);
     gainNode.gain.value = 0.3; // стартовое значение
 
-    // === запуск аудио при первом клике ===
-    function startAudio() {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      audio.play().then(() => {
-        playing = true;
-        userPaused = false;
-        btn.textContent = '🎵 Music: on';
-      }).catch(() => {});
-      document.removeEventListener('click', startAudio);
+   function fadeInAudio(duration = 2000) {
+      const start = audioCtx.currentTime;
+      gainNode.gain.setValueAtTime(0, start);
+      gainNode.gain.linearRampToValueAtTime(volumeSlider.value, start + duration / 1000);
     }
-    document.addEventListener('click', startAudio);
+    function fadeOutAudio(duration = 2000) {
+      const start = audioCtx.currentTime;
+      gainNode.gain.cancelScheduledValues(start);
+      gainNode.gain.setValueAtTime(gainNode.gain.value, start);
+      gainNode.gain.linearRampToValueAtTime(0, start + duration / 1000);
+      setTimeout(() => audio.pause(), duration);
+    }
 
+    // Кнопка включения музыки
     btn.addEventListener('click', () => {
-      if (playing) {
-        audio.pause();
-        btn.textContent = '🎵 Music: off';
-        playing = false;
-        userPaused = true;
-      } else {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (!playing) {
         audio.play().then(() => {
+          fadeInAudio();
           btn.textContent = '🎵 Music: on';
           playing = true;
           userPaused = false;
         }).catch(() => {});
+      } else {
+        fadeOutAudio();
+        btn.textContent = '🎵 Music: off';
+        playing = false;
+        userPaused = true;
       }
     });
 
@@ -441,6 +443,7 @@
   </script>
 </body>
 </html>
+
 
 
 
