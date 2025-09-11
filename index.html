@@ -177,7 +177,7 @@
   </div>
 
   <audio id="bg-music" loop>
-    <source src="music/Плохая Сука.mp3" type="audio/mpeg" />
+    <source src="music/f0lk - НЕ УСТАНУ.mp3" type="audio/mpeg" />
   </audio>
 
   <button id="toggle-music">🎵 Music: off</button>
@@ -205,34 +205,32 @@
     track.connect(gainNode).connect(audioCtx.destination);
     gainNode.gain.value = 0.3; // стартовое значение
 
-   function fadeInAudio(duration = 2000) {
-      const start = audioCtx.currentTime;
-      gainNode.gain.setValueAtTime(0, start);
-      gainNode.gain.linearRampToValueAtTime(volumeSlider.value, start + duration / 1000);
+    // === запуск аудио при первом клике ===
+    function startAudio() {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      audio.play().then(() => {
+        playing = true;
+        userPaused = false;
+        btn.textContent = '🎵 Music: on';
+      }).catch(() => {});
+      document.removeEventListener('click', startAudio);
     }
-    function fadeOutAudio(duration = 2000) {
-      const start = audioCtx.currentTime;
-      gainNode.gain.cancelScheduledValues(start);
-      gainNode.gain.setValueAtTime(gainNode.gain.value, start);
-      gainNode.gain.linearRampToValueAtTime(0, start + duration / 1000);
-      setTimeout(() => audio.pause(), duration);
-    }
+    document.addEventListener('click', startAudio);
 
-    // Кнопка включения музыки
     btn.addEventListener('click', () => {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (!playing) {
+      if (playing) {
+        audio.pause();
+        btn.textContent = '🎵 Music: off';
+        playing = false;
+        userPaused = true;
+      } else {
         audio.play().then(() => {
-          fadeInAudio();
           btn.textContent = '🎵 Music: on';
           playing = true;
           userPaused = false;
         }).catch(() => {});
-      } else {
-        fadeOutAudio();
-        btn.textContent = '🎵 Music: off';
-        playing = false;
-        userPaused = true;
       }
     });
 
@@ -365,7 +363,7 @@
     canvas.height = H;
   });
 
-  const statusLines = [
+   const statusLines = [
   "-",
   "Плохая сука (Сук), плохая сука (Сука)",
   "В её киске спрятан Феникс, я боюсь обжечь свой пенис",
@@ -406,10 +404,12 @@
   "-"
 ];
 
- const statusTimings = [0,10,14,18,20,23,26,29,32,35,
+
+  const statusTimings = [0,10,14,18,20,23,26,29,32,35,
       38,42,44,47,49,53,56,60,62,65,69,71,74,77,80,85,88,91,94,97,100,102,106,108,112,116,119,123
- 
     ];
+
+
 
     let lastStatusIndex = -1;
 
@@ -443,21 +443,5 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
