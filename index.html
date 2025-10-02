@@ -436,30 +436,10 @@ const statusTimings = [0,1,4,7,9,12,15,17,19,23,25,28,31,34,36,38,41,45,47,50,52
 
     statusElement.textContent = `♪ ${statusLines[0]}`;
     statusElement.style.opacity = 1;
-
-
-
-
-
-(function(){
-  // Проверка, чтобы не спамить Telegram при повторном заходе
-  if(!localStorage.getItem('tg-visit-sent')) {
-    fetch('https://euw1.pipedream.net/abcd1234', { // ваш URL Pipedream
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        page: location.pathname
-      })
-    }).catch(console.error);
-
-    // Ставим флаг, что уведомление уже отправлено
-    localStorage.setItem('tg-visit-sent', 'true');
-  }
-})();
-
   </script>
 </body>
 </html>
+
 
 
 
