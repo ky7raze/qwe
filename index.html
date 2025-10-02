@@ -39,10 +39,7 @@
       margin-top: 0;
       display: inline-block;
     }
-    h1 {
-      vertical-align: middle;
-      flex-grow: 1;
-    }
+    h1 { flex-grow: 1; }
     .header-with-avatar {
       display: flex;
       align-items: center;
@@ -51,21 +48,10 @@
       flex-wrap: wrap;
       justify-content: space-between;
     }
-    .header-left {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-    .header-left-row {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+    .header-left { display: flex; flex-direction: column; gap: 5px; }
+    .header-left-row { display: flex; align-items: center; gap: 15px; }
     .header-with-avatar img {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      object-fit: cover;
+      width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
       border: 2px solid white;
     }
     #dynamic-status {
@@ -85,65 +71,24 @@
       min-width: 100px;
       text-align: center;
     }
-    p {
-      line-height: 1.5;
+    a { color: #a0cfff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* === Плейлист === */
+    #player { text-align: center; margin-top: 20px; }
+    #track-title { margin-bottom: 10px; font-weight: bold; }
+    .controls button {
+      margin: 5px; padding: 8px 14px;
+      background: rgba(0,0,0,0.6); border: 1px solid white; border-radius: 5px;
+      color: white; cursor: pointer; transition: 0.2s;
     }
-    a {
-      color: #a0cfff;
-      text-decoration: none;
+    .controls button:hover { background: rgba(255,255,255,0.2); }
+    #playlist { list-style: none; padding: 0; margin-top: 15px; }
+    #playlist li {
+      padding: 5px; cursor: pointer;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
     }
-    a:hover {
-      text-decoration: underline;
-    }
-    @media (max-width: 600px) {
-      .container {
-        margin: 20px 10px;
-        padding: 20px;
-      }
-      h1, h2 {
-        padding: 10px 15px;
-        font-size: 1.3rem;
-      }
-      .header-with-avatar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      #clock {
-        margin-top: 10px;
-        min-width: auto;
-        width: 100%;
-      }
-    }
-    #toggle-music {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 15px;
-      font-size: 14px;
-      background-color: rgba(0,0,0,0.7);
-      color: white;
-      border: 1px solid white;
-      border-radius: 4px;
-      cursor: pointer;
-      z-index: 9999;
-    }
-    #volume-control {
-      position: fixed;
-      bottom: 70px;
-      right: 20px;
-      background-color: rgba(0,0,0,0.7);
-      padding: 8px 12px;
-      border: 1px solid white;
-      border-radius: 4px;
-      color: white;
-      font-size: 14px;
-      z-index: 9999;
-      width: 150px;
-      text-align: center;
-    }
-    #volume-control label {
-      font-size: 13px;
-    }
+    #playlist li.active { color: #a0cfff; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -162,7 +107,7 @@
     </div>
 
     <div class="section about-me">
-      <h2>𝕬𝖇𝖔𝖚𝖙 𝖒𝖊</h2>
+     <h2>𝕬𝖇𝖔𝖚𝖙 𝖒𝖊</h2>
       <p>➳❗️𝕹𝖆𝖒𝖊 - 𝖊𝖋𝖋𝖞 / effy</p>
       <p>➳❗️𝕬𝖌𝖊 - 18</p>
       <p>➳❗️𝕲𝖊𝖓𝖉𝖊𝖗 - 𝖒𝖆𝖑𝖊</p>
@@ -173,197 +118,41 @@
       <p>➳❗️𝕾𝖙𝖆𝖙𝖚𝖘 - single</p>
       <p>➳❗️xd / lol / noway / #отдамсягитаристке</p>
       <p>➳❗️<a href="https://t.me/empt1ed_tears" target="_blank" rel="noopener noreferrer">t𝖌</a> | <a href="https://t.me/Music_ky7" target="_blank" rel="noopener noreferrer">𝕸𝖚𝖘𝖎𝖈</a></p>
+
+    <!-- 🎵 Плейлист -->
+    <div id="player">
+      <p id="track-title">Загрузка...</p>
+      <audio id="audio" controls></audio>
+      <div class="controls">
+        <button id="prev">⏮ Prev</button>
+        <button id="play">▶ Play</button>
+        <button id="next">⏭ Next</button>
+      </div>
+      <ul id="playlist">
+        <li data-src="music/Я что-то посмотрел.mp3">Я что-то посмотрел - Locked23</li>
+        <li data-src="music/Напополам.mp3">Напополам - Locked23</li>
+        <li data-src="music/Первый раз.mp3">Первый раз - Yanix</li>
+      </ul>
     </div>
   </div>
 
-  <audio id="bg-music" loop>
-    <source src="music/Я что-то посмотрел.mp3" type="audio/mpeg" />
-  </audio>
-
-  <button id="toggle-music">🎵 Music: off</button>
-
-  <div id="volume-control">
-    <label for="volume">Volume</label><br />
-    <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
-  </div>
-
   <script>
-    const audio = document.getElementById('bg-music');
-    const btn = document.getElementById('toggle-music');
-    const volumeSlider = document.getElementById('volume');
-    const statusElement = document.getElementById('dynamic-status');
+    const audioEl = document.getElementById("audio");
+    const trackTitle = document.getElementById("track-title");
+    const playlist = document.getElementById("playlist").getElementsByTagName("li");
+    const playBtn = document.getElementById("play");
+    const nextBtn = document.getElementById("next");
+    const prevBtn = document.getElementById("prev");
+    const statusElement = document.getElementById("dynamic-status");
 
-    let playing = false;
-    let userPaused = false;
+    let currentTrack = 0;
+    let currentLyrics = null;
+    let lastStatusIndex = -1;
 
-    // === Добавлено: Web Audio API для iOS ===
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = new AudioContext();
-    const track = audioCtx.createMediaElementSource(audio);
-    const gainNode = audioCtx.createGain();
-
-    track.connect(gainNode).connect(audioCtx.destination);
-    gainNode.gain.value = 0.3; // стартовое значение
-
-    // === запуск аудио при первом клике ===
-    function startAudio() {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-      audio.play().then(() => {
-        playing = true;
-        userPaused = false;
-        btn.textContent = '🎵 Music: on';
-      }).catch(() => {});
-      document.removeEventListener('click', startAudio);
-    }
-    document.addEventListener('click', startAudio);
-
-    btn.addEventListener('click', () => {
-      if (playing) {
-        audio.pause();
-        btn.textContent = '🎵 Music: off';
-        playing = false;
-        userPaused = true;
-      } else {
-        audio.play().then(() => {
-          btn.textContent = '🎵 Music: on';
-          playing = true;
-          userPaused = false;
-        }).catch(() => {});
-      }
-    });
-
-    // === ползунок управляет gainNode ===
-    volumeSlider.addEventListener('input', () => {
-      gainNode.gain.value = volumeSlider.value;
-    });
-
-    document.addEventListener("visibilitychange", () => {
-      if (document.hidden) {
-        if (playing) audio.pause();
-      } else {
-        if (playing && !userPaused) audio.play();
-      }
-    });
-
-    // Часы
-    function updateClock() {
-      const clock = document.getElementById('clock');
-      const now = new Date();
-      const hours = now.getHours().toString().padStart(2, '0');
-      const minutes = now.getMinutes().toString().padStart(2, '0');
-      const seconds = now.getSeconds().toString().padStart(2, '0');
-      clock.textContent = `${hours}:${minutes}:${seconds}`;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-   // <!-- === Кровавые капли вместо сакуры === -->
-  const canvas = document.getElementById('sakura-canvas');
-  const ctx = canvas.getContext('2d');
-  let W = window.innerWidth;
-  let H = window.innerHeight;
-  canvas.width = W;
-  canvas.height = H;
-
-  class BloodDrop {
-    constructor() { this.reset(); }
-    reset() {
-  this.x = Math.random() * W;
-  this.y = Math.random() * -H;
-  this.radius = 4 + Math.random() * 6; // капли крупнее (от 4 до 10px)
-  this.speed = 2 + Math.random() * 3;
-  this.opacity = 0.6 + Math.random() * 0.4;
-  this.exploded = false;
-    }
-    update() {
-      if (!this.exploded) {
-        this.y += this.speed;
-        if (this.y > H - this.radius) {
-          this.explode();
-        }
-      }
-    }
-    draw(ctx) {
-      if (!this.exploded) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(150, 0, 0, ${this.opacity})`;
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        // хвостик
-        ctx.beginPath();
-        const tailHeight = this.radius * 4;
-        const grad = ctx.createLinearGradient(this.x, this.y - tailHeight, this.x, this.y);
-        grad.addColorStop(0, `rgba(150,0,0,0)`);
-        grad.addColorStop(1, `rgba(150,0,0,${this.opacity})`);
-        ctx.fillStyle = grad;
-        ctx.fillRect(this.x - this.radius / 2, this.y - tailHeight, this.radius, tailHeight);
-      }
-    }
-    explode() {
-      this.exploded = true;
-      for (let i = 0; i < 6; i++) {
-        splashes.push(new BloodSplash(this.x, H - this.radius));
-      }
-      this.reset();
-    }
-  }
-
-  class BloodSplash {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-      this.radius = 1 + Math.random() * 2;
-      this.speedX = (Math.random() - 0.5) * 4;
-      this.speedY = -Math.random() * 3 - 1;
-      this.gravity = 0.15;
-      this.opacity = 1;
-      this.life = 40 + Math.random() * 20;
-    }
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      this.speedY += this.gravity;
-      this.life--;
-      this.opacity = Math.max(0, this.life / 60);
-    }
-    draw(ctx) {
-      if (this.life > 0) {
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(120,0,0,${this.opacity})`;
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-  }
-
-  const drops = Array.from({ length: 60 }, () => new BloodDrop());
-  const splashes = [];
-
-  function animate() {
-    ctx.clearRect(0, 0, W, H);
-    drops.forEach(d => { d.update(); d.draw(ctx); });
-    splashes.forEach((s, i) => {
-      s.update();
-      s.draw(ctx);
-      if (s.life <= 0) splashes.splice(i, 1);
-    });
-    requestAnimationFrame(animate);
-  }
-  animate();
-
-  window.addEventListener('resize', () => {
-    W = window.innerWidth;
-    H = window.innerHeight;
-    canvas.width = W;
-    canvas.height = H;
-  });
-
-   const statusLines = [" ",
+    // === База "субтитров" ===
+    const lyricsData = {
+      "music/Я что-то посмотрел.mp3": {
+        lines:  [" ",
   "Пятница и я устал",
   "Я хотел очень отдохнуть",
   "Ну а ты подсела ко мне",
@@ -400,53 +189,200 @@
   "Она несёт хуйню — это не моя вина",
   " "
 ];
+        timings: [0,1,4,7,9,12,15,17,19,23,25,28,31,34,36,38,41,45,47,50,52,53.4,55,58,60,62,65,67,69,72,75,78,80,83,86,89]
+      },
+      "music/Напополам.mp3": {
+        lines: [" ",
+  "Слушай, я больше не верю твоим словам",
+  "Ты меня обманула вновь и снова этот скандал",
+  "Ты так красиво танцевала, пока я лежал в хлам",
+  "Напополам, чувства напополам",
+  "Слушай, я больше не верю твоим словам",
+  "Ты меня обманула вновь и снова этот скандал",
+  "Ты так красиво танцевала, пока я лежал в хлам",
+  "Напополам, чувства напополам",
+  "И каждый день не тот, мысли наоборот",
+  "Ты как обычно сука, я как обычно урод",
+  "Устрой мне тут урок, плаваю вблизи порог",
+  "Ты как обычно сука, я как обычно урод",
+  "Я как обычно скучаю, ты с кем-то гуляешь",
+  "Может хоть сейчас ты мне всю правду расскажешь?",
+  "Я сделаю вдох и решусь на звонок",
+  "Я больше не верю. Последний гудок",
+  "Слушай, я больше не верю твоим словам",
+  "Ты меня обманула вновь и снова этот скандал",
+  "Ты так красиво танцевала, пока я лежал в хлам",
+  "Напополам, чувства напополам",
+  "Слушай, я больше не верю твоим словам",
+  "Ты меня обманула вновь и снова этот скандал",
+  "Ты так красиво танцевала, пока я лежал в хлам",
+  "Напополам, чувства напополам",
+  "Слушай, я больше не верю твоим словам",
+  "Ты меня обманула вновь и снова этот скандал",
+  "Ты так красиво танцевала, пока я лежал в хлам",
+  "Напополам, чувства напополам"],
+        timings: [0,4,7,10,13,15,18,21,24,27,30,33,36,39,
+42,45,48,51,54,56,59,62,65,68,70,74,76,79,82]
+      },
 
+    "music/Первый раз.mp3": {
+        lines: [" ",
+  "На мне были конверсы, я хотел снять их",
+  "У нее был такой фетиш, она сказала: «Оставь их»",
+  "Девочек так много, я не успеваю отвечать им",
+  "Еду с Катей на пул пати, звоню Наде: «Хочешь с нами?»",
+  "Кстати, приготовь лёд перед тем, как взять в рот",
+  "Она говорит «стоп» и не чувствует ног",
+  "Она лучше всех вас, ей не нужен мейк-ап",
+  "Она очень хочет водить мою дочку в дет. сад",
+  "Я влетаю в её стенки, будто бы доска на рельсы",
+  "Я использую резину, чтобы оставаться свежим",
+  "Я останусь с нею ночью, она скажет всем об этом",
+  "Но если она не очень — я останусь с ней одетым",
+  "Я вставляю до конца, пока мне не видно света",
+  "Я рву обе эти вещи: киски и контракты лейбла",
+  "Если кто про неё спросит, я буду отрицать это",
+  "Это некто с улиц гетто, мое тело хочет секса, babe",
+  "Пропущенный номер, знакомые цифры",
+  "Звонок на межгород, разговор быстрый",
+  "Ты ещё меня помнишь? Встречный вопрос, киска",
+  "Скажи, я делал это медленно или быстро?",
+  "Скажи ,ты помнишь, как я трахал тебя первый раз?",
+  "Хочешь ли ты этого сейчас?",
+  "Никогда не даю второй шанс",
+  "Это время не вернуть назад",
+  "На ней были стринги, я сорвал их как дикий",
+  "Залил сливками тити, она конкурент Ники",
+  "Я сказал ей быть тише, когда мы одни в лифте",
+  "Залезаем на крышу, она говорит: «Сквиртим»",
+  "Мы шумели очень громко, они вызывали копов",
+  "У меня солидный хобот, но меня бы взяли в Тодес",
+  "Бой, любой из моих хоуми скажет, что янг Яни болен",
+  "Если она с парнем в ссоре, то она уже мне звонит",
+  "Моя сука ходит топлес, я не видел её шмоток",
+  "Я готов поклясться богом, она лучше, чем на фото",
+  "Я кладу язык на горло, поместив руки на бёдра",
+  "И она глотает, словно хочет оторвать мой орган",
+  "Она лезет вон из кожи, лишь бы выйти из френдзоны",
+  "Я проверю ее формы, как программа «Ревизорро»",
+  "Подмешал ей таблы в колу, её вперло по-любому",
+  "Теперь она хочет, чтоб мы сняли порно на айфоны, хоуми",
+  "Пропущенный номер, знакомые цифры",
+  "Звонок на межгород, разговор быстрый",
+  "Ты еще меня помнишь? Встречный вопрос, киска",
+  "Скажи я делал это медленно или быстро?",
+  "Скажи ,ты помнишь, как я трахал тебя первый раз?",
+  "Хочешь ли ты этого сейчас?",
+  "Никогда не даю второй шанс",
+  "Это время не вернуть назад",
+  " "
+],
+        timings: [0,
+ 18, 20, 23, 25,
+  27, 30, 33, 35, 37, 39, 42, 44, 46,
+  49, 51.5, 54, 56, 59, 60, 63, 66, 69,
+  72, 74, 76, 78, 80, 83, 85, 87.5, 89,
+  91, 93, 95, 97, 99, 102, 104, 107,
+  109, 111, 114, 117, 119, 121, 123, 126, 129, 131, 134
+]
+      }
+    };
 
-const statusTimings = [0,1,4,7,9,12,15,17,19,23,25,28,31,34,36,38,41,45,47,50,52,53.4,55,58,60,62,65,67,69,72,75,78,80,83,86,89];
+    // === Загрузка трека ===
+    function loadTrack(index) {
+      [...playlist].forEach(li => li.classList.remove("active"));
+      playlist[index].classList.add("active");
+      audioEl.src = playlist[index].getAttribute("data-src");
+      trackTitle.textContent = playlist[index].textContent;
+      loadLyricsForTrack(audioEl.src);
+      audioEl.play();
+      playBtn.textContent = "⏸ Pause";
+    }
 
-
-
-
-    let lastStatusIndex = -1;
+    // === Лирика ===
+    function loadLyricsForTrack(trackSrc) {
+      currentLyrics = lyricsData[trackSrc] || null;
+      lastStatusIndex = -1;
+      if (currentLyrics) {
+        statusElement.textContent = `♪ ${currentLyrics.lines[0]}`;
+        statusElement.style.opacity = 1;
+      } else {
+        statusElement.textContent = "";
+      }
+    }
 
     function updateStatusByTime(currentTime) {
+      if (!currentLyrics) return;
       let index = 0;
-      for (let i = 0; i < statusTimings.length; i++) {
-        if (currentTime >= statusTimings[i]) {
-          index = i;
-        } else {
-          break;
-        }
+      for (let i = 0; i < currentLyrics.timings.length; i++) {
+        if (currentTime >= currentLyrics.timings[i]) index = i;
+        else break;
       }
       if (index !== lastStatusIndex) {
         lastStatusIndex = index;
         statusElement.style.opacity = 0;
         setTimeout(() => {
-          statusElement.textContent = `♪ ${statusLines[index]}`;
+          statusElement.textContent = `♪ ${currentLyrics.lines[index]}`;
           statusElement.style.opacity = 1;
         }, 300);
       }
     }
 
+    // === Обновление статуса каждые 0.5с ===
     setInterval(() => {
-      if (!audio.paused) {
-        updateStatusByTime(audio.currentTime);
-      }
+      if (!audioEl.paused) updateStatusByTime(audioEl.currentTime);
     }, 500);
 
-    statusElement.textContent = `♪ ${statusLines[0]}`;
-    statusElement.style.opacity = 1;
+    // === Управление ===
+    playBtn.addEventListener("click", () => {
+      if (audioEl.paused) {
+        audioEl.play();
+        playBtn.textContent = "⏸ Pause";
+      } else {
+        audioEl.pause();
+        playBtn.textContent = "▶ Play";
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      currentTrack = (currentTrack + 1) % playlist.length;
+      loadTrack(currentTrack);
+    });
+
+    prevBtn.addEventListener("click", () => {
+      currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+      loadTrack(currentTrack);
+    });
+
+    [...playlist].forEach((li, index) => {
+      li.addEventListener("click", () => {
+        currentTrack = index;
+        loadTrack(currentTrack);
+      });
+    });
+
+    audioEl.addEventListener("ended", () => {
+      currentTrack = (currentTrack + 1) % playlist.length;
+      loadTrack(currentTrack);
+    });
+
+    audioEl.addEventListener("loadedmetadata", () => {
+      loadLyricsForTrack(audioEl.src);
+    });
+
+    // Запускаем первый трек
+    loadTrack(currentTrack);
+
+    // Часы
+    function updateClock() {
+      const clock = document.getElementById('clock');
+      const now = new Date();
+      const h = now.getHours().toString().padStart(2,'0');
+      const m = now.getMinutes().toString().padStart(2,'0');
+      const s = now.getSeconds().toString().padStart(2,'0');
+      clock.textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateClock,1000); updateClock();
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
