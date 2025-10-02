@@ -436,8 +436,20 @@ const statusTimings = [0,1,4,7,9,12,15,17,19,23,25,28,31,34,36,38,41,45,47,50,52
 
     statusElement.textContent = `♪ ${statusLines[0]}`;
     statusElement.style.opacity = 1;
+
+
+
+
+     fetch('https://eofojcdu4w8y7ju.m.pipedream.net', { // ваш URL из Pipedream
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      page: location.pathname
+    })
+  }).catch(console.error);
   </script>
 </body>
 </html>
+
 
 
