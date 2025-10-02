@@ -69,13 +69,22 @@
       border: 2px solid white;
     }
     #dynamic-status {
-      font-style: italic;
-      font-size: 0.95rem;
-      color: #cccccc;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      min-height: 1.4em;
-    }
+  font-style: italic;
+  font-size: 0.95rem;
+  color: #cccccc;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+  min-height: 1.4em;
+}
+#visualizer-canvas {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  pointer-events: none;
+  z-index: 2;
+}
     #clock {
       font-size: 1.2rem;
       background-color: black;
@@ -186,6 +195,8 @@
     <label for="volume">Volume</label><br />
     <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
   </div>
+
+  <canvas id="visualizer-canvas"></canvas>
 
   <script>
     const audio = document.getElementById('bg-music');
@@ -436,9 +447,70 @@ const statusTimings = [0,1,4,7,9,12,15,17,19,23,25,28,31,34,36,38,41,45,47,50,52
 
     statusElement.textContent = `♪ ${statusLines[0]}`;
     statusElement.style.opacity = 1;
+
+
+
+    // === Fade out/in для статусов ===
+function updateStatusByTime(currentTime) {
+  let index = 0;
+  for (let i = 0; i < statusTimings.length; i++) {
+    if (currentTime >= statusTimings[i]) index = i;
+    else break;
+  }
+  if (index !== lastStatusIndex) {
+    lastStatusIndex = index;
+    statusElement.style.opacity = 0; // fade out
+    setTimeout(() => {
+      statusElement.textContent = `♪ ${statusLines[index]}`;
+      statusElement.style.opacity = 1; // fade in
+    }, 600); // совпадает с CSS transition
+  }
+}
+
+// === Визуализатор аудио ===
+const visCanvas = document.getElementById('visualizer-canvas');
+const visCtx = visCanvas.getContext('2d');
+visCanvas.width = window.innerWidth;
+visCanvas.height = 100;
+
+const analyser = audioCtx.createAnalyser();
+track.connect(analyser);
+analyser.connect(audioCtx.destination);
+analyser.fftSize = 256;
+const bufferLength = analyser.frequencyBinCount;
+const dataArray = new Uint8Array(bufferLength);
+
+function drawVisualizer() {
+  requestAnimationFrame(drawVisualizer);
+  analyser.getByteFrequencyData(dataArray);
+  visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
+
+  const barWidth = (visCanvas.width / bufferLength) * 2.5;
+  let x = 0;
+
+  for (let i = 0; i < bufferLength; i++) {
+    const barHeight = dataArray[i] / 2;
+    // Тёмно-красный градиент
+    const red = 150 + barHeight / 2;
+    const darkRed = 50 + barHeight / 5;
+    visCtx.fillStyle = `rgb(${red}, 0, ${darkRed})`;
+    visCtx.fillRect(x, visCanvas.height - barHeight, barWidth, barHeight);
+    x += barWidth + 1;
+  }
+}
+
+drawVisualizer();
+
+window.addEventListener('resize', () => {
+  visCanvas.width = window.innerWidth;
+  visCanvas.height = 100;
+});
+
+
   </script>
 </body>
 </html>
+
 
 
 
