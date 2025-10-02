@@ -304,11 +304,7 @@ function loadLyricsForTrack(trackSrc) {
   currentLyrics = lyricsData[trackSrc] || null;
   lastStatusIndex = -1;
   if (currentLyrics) {
-    // ищем первый непустой статус
-    let firstLineIndex = currentLyrics.lines.findIndex(line => line.trim() !== "");
-    if (firstLineIndex === -1) firstLineIndex = 0;
-    lastStatusIndex = firstLineIndex - 1; // чтобы updateStatusByTime сразу обновил
-    statusElement.textContent = currentLyrics.lines[firstLineIndex];
+    statusElement.textContent = currentLyrics.lines[0];
     statusElement.style.opacity = 1;
   } else {
     statusElement.textContent = "";
@@ -394,6 +390,7 @@ function updateStatusByTime(currentTime) {
   </script>
 </body>
 </html>
+
 
 
 
