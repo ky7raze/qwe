@@ -121,7 +121,6 @@
 
     <!-- 🎵 Плейлист -->
     <div id="player">
-      <p id="track-title">Загрузка...</p>
       <audio id="audio"></audio>
       <div class="controls">
         <button id="prev">⏮ Prev</button>
@@ -293,7 +292,7 @@
       [...playlist].forEach(li => li.classList.remove("active"));
       playlist[index].classList.add("active");
       audioEl.src = playlist[index].getAttribute("data-src");
-      trackTitle.textContent = playlist[index].textContent;
+      trackTitle?.remove();
       loadLyricsForTrack(audioEl.src);
       audioEl.play();
       playBtn.textContent = "⏸ Pause";
@@ -386,6 +385,7 @@
   </script>
 </body>
 </html>
+
 
 
 
