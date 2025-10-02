@@ -288,44 +288,46 @@
     };
 
     // === Загрузка трека ===
-    function loadTrack(index) {
-      [...playlist].forEach(li => li.classList.remove("active"));
-      playlist[index].classList.add("active");
-      audioEl.src = playlist[index].getAttribute("data-src");
-      trackTitle?.remove();
-      loadLyricsForTrack(audioEl.src);
-      audioEl.play();
-      playBtn.textContent = "⏸ Pause";
-    }
+    // === Загрузка трека ===
+function loadTrack(index) {
+  [...playlist].forEach(li => li.classList.remove("active"));
+  playlist[index].classList.add("active");
+  audioEl.src = playlist[index].getAttribute("data-src");
+  // trackTitle больше не нужен
+  loadLyricsForTrack(audioEl.src);
+  audioEl.play();
+  playBtn.textContent = "⏸ Pause";
+}
 
-    // === Лирика ===
-    function loadLyricsForTrack(trackSrc) {
-      currentLyrics = lyricsData[trackSrc] || null;
-      lastStatusIndex = -1;
-      if (currentLyrics) {
-        statusElement.textContent = `♪ ${currentLyrics.lines[0]}`;
-        statusElement.style.opacity = 1;
-      } else {
-        statusElement.textContent = "";
-      }
-    }
+// === Лирика ===
+function loadLyricsForTrack(trackSrc) {
+  currentLyrics = lyricsData[trackSrc] || null;
+  lastStatusIndex = -1;
+  if (currentLyrics) {
+    // показываем первый статус
+    statusElement.textContent = currentLyrics.lines[0];
+    statusElement.style.opacity = 1;
+  } else {
+    statusElement.textContent = "";
+  }
+}
 
-    function updateStatusByTime(currentTime) {
-      if (!currentLyrics) return;
-      let index = 0;
-      for (let i = 0; i < currentLyrics.timings.length; i++) {
-        if (currentTime >= currentLyrics.timings[i]) index = i;
-        else break;
-      }
-      if (index !== lastStatusIndex) {
-        lastStatusIndex = index;
-        statusElement.style.opacity = 0;
-        setTimeout(() => {
-          statusElement.textContent = `♪ ${currentLyrics.lines[index]}`;
-          statusElement.style.opacity = 1;
-        }, 300);
-      }
-    }
+function updateStatusByTime(currentTime) {
+  if (!currentLyrics) return;
+  let index = 0;
+  for (let i = 0; i < currentLyrics.timings.length; i++) {
+    if (currentTime >= currentLyrics.timings[i]) index = i;
+    else break;
+  }
+  if (index !== lastStatusIndex) {
+    lastStatusIndex = index;
+    statusElement.style.opacity = 0;
+    setTimeout(() => {
+      statusElement.textContent = currentLyrics.lines[index];
+      statusElement.style.opacity = 1;
+    }, 300);
+  }
+}
 
     // === Обновление статуса каждые 0.5с ===
     setInterval(() => {
@@ -385,6 +387,7 @@
   </script>
 </body>
 </html>
+
 
 
 
