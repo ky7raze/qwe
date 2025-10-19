@@ -14,6 +14,50 @@
       position: relative;
       overflow-x: hidden;
     }
+
+    /* === Boot Terminal === */
+    #boot {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: black;
+      color: #ff0000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Courier New", monospace;
+      overflow: hidden;
+      z-index: 99999;
+      transition: opacity 1s ease;
+    }
+    #terminal-window {
+      width: 80%;
+      max-width: 800px;
+      height: 60%;
+      background-color: rgba(0, 0, 0, 0.9);
+      border: 1px solid #ff0000;
+      padding: 20px;
+      box-shadow: 0 0 25px rgba(255, 0, 0, 0.5);
+      overflow: hidden;
+      position: relative;
+    }
+    #terminal-text {
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    #terminal-cursor {
+      display: inline-block;
+      color: #ff0000;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* === Основной контент === */
+    #main-content {
+      display: none;
+    }
+
     #sakura-canvas {
       position: fixed;
       top: 0; left: 0;
@@ -39,10 +83,7 @@
       margin-top: 0;
       display: inline-block;
     }
-    h1 {
-      vertical-align: middle;
-      flex-grow: 1;
-    }
+    h1 { flex-grow: 1; }
     .header-with-avatar {
       display: flex;
       align-items: center;
@@ -85,35 +126,9 @@
       min-width: 100px;
       text-align: center;
     }
-    p {
-      line-height: 1.5;
-    }
-    a {
-      color: #ffffff;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    @media (max-width: 600px) {
-      .container {
-        margin: 20px 10px;
-        padding: 20px;
-      }
-      h1, h2 {
-        padding: 10px 15px;
-        font-size: 1.3rem;
-      }
-      .header-with-avatar {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      #clock {
-        margin-top: 10px;
-        min-width: auto;
-        width: 100%;
-      }
-    }
+    a { color: #ffffff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
     #toggle-music {
       position: fixed;
       bottom: 20px;
@@ -141,97 +156,101 @@
       width: 150px;
       text-align: center;
     }
-    #volume-control label {
-      font-size: 13px;
-    }
-
-
-    #terminal-window {
-  background: rgba(0,0,0,0.75);
-  border: 1px solid rgba(255,0,0,0.4);
-  border-radius: 6px;
-  padding: 15px;
-  font-family: "Courier New", monospace;
-  color: #ff0000;
-  font-size: 14px;
-  min-height: 180px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 0 10px rgba(255,0,0,0.2);
-}
-#terminal-text {
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin: 0;
-}
-#terminal-cursor {
-  display: inline-block;
-  animation: blink 1s infinite;
-}
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-
+    #volume-control label { font-size: 13px; }
   </style>
 </head>
+
 <body>
-  <canvas id="sakura-canvas"></canvas>
 
-  <div class="container">
-    <div class="header-with-avatar">
-      <div class="header-left">
-        <div class="header-left-row">
-          <img src="images/ava.jpg" alt="Avatar" />
-          <h1>𝖓𝖓𝖊𝖙𝖔𝖋𝖞 / nnetofy</h1>
+  <!-- === BOOT SCREEN === -->
+  <div id="boot">
+    <div id="terminal-window">
+      <pre id="terminal-text"></pre>
+      <div id="terminal-cursor">█</div>
+    </div>
+  </div>
+
+  <!-- === MAIN CONTENT === -->
+  <div id="main-content">
+    <canvas id="sakura-canvas"></canvas>
+
+    <div class="container">
+      <div class="header-with-avatar">
+        <div class="header-left">
+          <div class="header-left-row">
+            <img src="images/ava.jpg" alt="Avatar" />
+            <h1>𝖓𝖓𝖊𝖙𝖔𝖋𝖞 / nnetofy</h1>
+          </div>
+          <p id="dynamic-status">♪ Загрузка...</p>
         </div>
-        <p id="dynamic-status">♪ Загрузка...</p>
+        <div id="clock">00:00:00</div>
       </div>
-      <div id="clock">00:00:00</div>
+
+      <div class="section about-me">
+        <h2>𝕬𝖇𝖔𝖚𝖙 𝖒𝖊</h2>
+        <p>➳❗️𝕹𝖆𝖒𝖊 - 𝖓𝖓𝖊𝖙𝖔𝖋𝖞 / nnetofy</p>
+        <p>➳❗️𝕬𝖌𝖊 - 18</p>
+        <p>➳❗️𝕲𝖊𝖓𝖉𝖊𝖗 - 𝖒𝖆𝖑𝖊</p>
+        <p>➳❗️𝕬𝖇𝖔𝖚𝖙 𝖒𝖊 - 𝖎𝖉𝖐, 𝖒𝖇 𝖋𝖆𝖓 𝖔𝖋 𝕴𝖛𝖔𝖝𝖞𝖌𝖊𝖓</p>
+        <p>➳❗️𝕾𝖙𝖆𝖙𝖚𝖘 - single</p>
+        <p>➳❗️𝖙𝖌 - <a href="https://t.me/m/w_zw2JlnZmE0" target="_blank">𝖓𝖓𝖊𝖙𝖔𝖋𝖞</a></p>
+        <p>➳❗️xd / lol / noway / #отдамсягитаристке</p>
+        <p>➳❗️<a href="https://t.me/empt1ed_tears" target="_blank" rel="noopener noreferrer">t𝖌</a> | <a href="https://t.me/Music_ky7" target="_blank" rel="noopener noreferrer">𝕸𝖚𝖘𝖎𝖈</a></p>
+      </div>
     </div>
 
-<div class="section terminal">
-  <h2>𝕮𝖔𝖓𝖘𝖔𝖑𝖊</h2>
-  <div id="terminal-window">
-    <pre id="terminal-text"></pre>
-    <div id="terminal-cursor">█</div>
-  </div>
-</div>
+    <audio id="bg-music" loop>
+      <source src="music/Asperity.mp3" type="audio/mpeg" />
+    </audio>
 
-    
-    <div class="section about-me">
-      <h2>𝕬𝖇𝖔𝖚𝖙 𝖒𝖊</h2>
-      <p>➳❗️𝕹𝖆𝖒𝖊 - 𝖓𝖓𝖊𝖙𝖔𝖋𝖞 / nnetofy</p>
-      <p>➳❗️𝕬𝖌𝖊 - 18</p>
-      <p>➳❗️𝕲𝖊𝖓𝖉𝖊𝖗 - 𝖒𝖆𝖑𝖊</p>
-      <p>➳❗️𝕬𝖇𝖔𝖚𝖙 𝖒𝖊 - 𝖎𝖉𝖐, 𝖒𝖇 𝖋𝖆𝖓 𝖔𝖋 𝕴𝖛𝖔𝖝𝖞𝖌𝖊𝖓</p>
-      <p>➳❗️???</p>
-      <p>➳❗️𝖀𝖘𝖊𝖗𝖓𝖆𝖒𝖊 - ------</p>
-      <p>➳❗️𝖙𝖌 - <a href="https://t.me/m/w_zw2JlnZmE0" target="_blank" rel="noopener noreferrer">𝖓𝖓𝖊𝖙𝖔𝖋𝖞</a></p>
-      <p>➳❗️𝕾𝖙𝖆𝖙𝖚𝖘 - single</p>
-      <p>➳❗️xd / lol / noway / #отдамсягитаристке</p>
-      <p>➳❗️<a href="https://t.me/empt1ed_tears" target="_blank" rel="noopener noreferrer">t𝖌</a> | <a href="https://t.me/Music_ky7" target="_blank" rel="noopener noreferrer">𝕸𝖚𝖘𝖎𝖈</a></p>
+    <button id="toggle-music">🎵 Music: off</button>
+    <div id="volume-control">
+      <label for="volume">Volume</label><br />
+      <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
     </div>
   </div>
-
-  <audio id="bg-music" loop>
-    <source src="music/Asperity.mp3" type="audio/mpeg" />
-  </audio>
-
-  <button id="toggle-music">🎵 Music: off</button>
-
-  <div id="volume-control">
-    <label for="volume">Volume</label><br />
-    <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
-  </div>
-
-  <footer style="text-align:center;opacity:0.6;margin-top:40px;">
-  <p>© 2025 𝖓𝖓𝖊𝖙𝖔𝖋𝖞</p>
-  </footer>
-
 
   <script>
-    const audio = document.getElementById('bg-music');
+  // === BOOT TERMINAL ===
+  const bootLines = [
+    ">>> INITIALIZING SYSTEM 𝕹𝖓𝖊𝖙𝖔𝖋𝖞 [v1.0]",
+    ">>> LOADING BLOOD PARTICLES...",
+    ">>> SYNTH CORE ONLINE",
+    ">>> CONNECTING TO DARKNET...",
+    ">>> PLAYING: Asperity.mp3",
+    ">>> STATUS: stable",
+    ">>> WELCOME BACK, 𝖓𝖓𝖊𝖙𝖔𝖋𝖞"
+  ];
+
+  const term = document.getElementById("terminal-text");
+  const cursor = document.getElementById("terminal-cursor");
+  let line = 0, char = 0;
+
+  function typeLine() {
+    if (line < bootLines.length) {
+      if (char < bootLines[line].length) {
+        term.textContent += bootLines[line][char];
+        char++;
+        setTimeout(typeLine, 40);
+      } else {
+        term.textContent += "\n";
+        char = 0; line++;
+        setTimeout(typeLine, 250);
+      }
+    } else {
+      cursor.style.display = "none";
+      setTimeout(() => {
+        document.getElementById("boot").style.opacity = 0;
+        setTimeout(() => {
+          document.getElementById("boot").style.display = "none";
+          document.getElementById("main-content").style.display = "block";
+        }, 1000);
+      }, 1000);
+    }
+  }
+  window.addEventListener("load", ()=>setTimeout(typeLine, 500));
+
+   const audio = document.getElementById('bg-music');
     const btn = document.getElementById('toggle-music');
     const volumeSlider = document.getElementById('volume');
     const statusElement = document.getElementById('dynamic-status');
@@ -494,82 +513,7 @@ const statusTimings = [0,15,18,19.5,23,25,27,31,35,39,40.5,42,45,46.5,48,50,52,5
 
     statusElement.textContent = `♪ ${statusLines[0]}`;
     statusElement.style.opacity = 1;
-
-
-
-    const termText = document.getElementById("terminal-text");
-const cursor = document.getElementById("terminal-cursor");
-
-const terminalLines = [
-  "> booting nnetofy.exe ...",
-  "> initializing personality modules ...",
-  "> loading memory sectors ...",
-  "> connection established.",
-  "> status: alive",
-  "> welcome back, user."
-];
-
-let lineIndex = 0;
-let charIndex = 0;
-let typing = true;
-
-function typeLine() {
-  if (lineIndex < terminalLines.length) {
-    const line = terminalLines[lineIndex];
-    if (charIndex < line.length) {
-      termText.textContent += line[charIndex];
-      charIndex++;
-      setTimeout(typeLine, 50 + Math.random() * 60);
-    } else {
-      termText.textContent += "\n";
-      charIndex = 0;
-      lineIndex++;
-      setTimeout(typeLine, 500);
-    }
-  } else {
-    typing = false;
-  }
-}
-typeLine();
-
-// мигающий курсор
-setInterval(() => {
-  cursor.style.opacity = cursor.style.opacity === "0" ? "1" : "0";
-}, 500);
-
-// интерактивность — "ввод" команды
-document.addEventListener("keydown", e => {
-  if (!typing && e.key === "Enter") {
-    const commands = [
-      "> whoami",
-      "> user: 𝖓𝖓𝖊𝖙𝖔𝖋𝖞",
-      "> location: the void",
-      "> mood: unstable but functional",
-      "> executing dream.exe ..."
-    ];
-    typing = true;
-    termText.textContent += "\n";
-    lineIndex = 0;
-    charIndex = 0;
-    terminalLines.splice(0, terminalLines.length, ...commands);
-    typeLine();
-  }
-});
-
   </script>
+
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
