@@ -144,6 +144,35 @@
     #volume-control label {
       font-size: 13px;
     }
+
+
+    #terminal-window {
+  background: rgba(0,0,0,0.75);
+  border: 1px solid rgba(255,0,0,0.4);
+  border-radius: 6px;
+  padding: 15px;
+  font-family: "Courier New", monospace;
+  color: #ff0000;
+  font-size: 14px;
+  min-height: 180px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(255,0,0,0.2);
+}
+#terminal-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+#terminal-cursor {
+  display: inline-block;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
   </style>
 </head>
 <body>
@@ -161,6 +190,15 @@
       <div id="clock">00:00:00</div>
     </div>
 
+<div class="section terminal">
+  <h2>𝕮𝖔𝖓𝖘𝖔𝖑𝖊</h2>
+  <div id="terminal-window">
+    <pre id="terminal-text"></pre>
+    <div id="terminal-cursor">█</div>
+  </div>
+</div>
+
+    
     <div class="section about-me">
       <h2>𝕬𝖇𝖔𝖚𝖙 𝖒𝖊</h2>
       <p>➳❗️𝕹𝖆𝖒𝖊 - 𝖓𝖓𝖊𝖙𝖔𝖋𝖞 / nnetofy</p>
@@ -186,6 +224,11 @@
     <label for="volume">Volume</label><br />
     <input id="volume" type="range" min="0" max="1" step="0.01" value="0.3" />
   </div>
+
+  <footer style="text-align:center;opacity:0.6;margin-top:40px;">
+  <p>© 2025 𝖓𝖓𝖊𝖙𝖔𝖋𝖞</p>
+  </footer>
+
 
   <script>
     const audio = document.getElementById('bg-music');
@@ -451,9 +494,72 @@ const statusTimings = [0,15,18,19.5,23,25,27,31,35,39,40.5,42,45,46.5,48,50,52,5
 
     statusElement.textContent = `♪ ${statusLines[0]}`;
     statusElement.style.opacity = 1;
+
+
+
+    const termText = document.getElementById("terminal-text");
+const cursor = document.getElementById("terminal-cursor");
+
+const terminalLines = [
+  "> booting nnetofy.exe ...",
+  "> initializing personality modules ...",
+  "> loading memory sectors ...",
+  "> connection established.",
+  "> status: alive",
+  "> welcome back, user."
+];
+
+let lineIndex = 0;
+let charIndex = 0;
+let typing = true;
+
+function typeLine() {
+  if (lineIndex < terminalLines.length) {
+    const line = terminalLines[lineIndex];
+    if (charIndex < line.length) {
+      termText.textContent += line[charIndex];
+      charIndex++;
+      setTimeout(typeLine, 50 + Math.random() * 60);
+    } else {
+      termText.textContent += "\n";
+      charIndex = 0;
+      lineIndex++;
+      setTimeout(typeLine, 500);
+    }
+  } else {
+    typing = false;
+  }
+}
+typeLine();
+
+// мигающий курсор
+setInterval(() => {
+  cursor.style.opacity = cursor.style.opacity === "0" ? "1" : "0";
+}, 500);
+
+// интерактивность — "ввод" команды
+document.addEventListener("keydown", e => {
+  if (!typing && e.key === "Enter") {
+    const commands = [
+      "> whoami",
+      "> user: 𝖓𝖓𝖊𝖙𝖔𝖋𝖞",
+      "> location: the void",
+      "> mood: unstable but functional",
+      "> executing dream.exe ..."
+    ];
+    typing = true;
+    termText.textContent += "\n";
+    lineIndex = 0;
+    charIndex = 0;
+    terminalLines.splice(0, terminalLines.length, ...commands);
+    typeLine();
+  }
+});
+
   </script>
 </body>
 </html>
+
 
 
 
