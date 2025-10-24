@@ -53,7 +53,7 @@
     }
     @keyframes blink { 50% { opacity: 0; } }
 
-    /* === Основной контент === */
+  
     #main-content {
       display: none;
     }
@@ -162,7 +162,7 @@
 
 <body>
 
-  <!-- === BOOT SCREEN === -->
+// загрузка 
   <div id="boot">
     <div id="terminal-window">
       <pre id="terminal-text"></pre>
@@ -170,7 +170,7 @@
     </div>
   </div>
 
-  <!-- === MAIN CONTENT === -->
+// главный контент
   <div id="main-content">
     <canvas id="sakura-canvas"></canvas>
 
@@ -216,7 +216,7 @@
   </div>
 
   <script>
-  // === BOOT TERMINAL ===
+  
   const bootLines = [
     ">>> INITIALIZING SYSTEM 𝕹𝖓𝖊𝖙𝖔𝖋𝖞 [v1.0]",
     ">>> LOADING BLOOD PARTICLES...",
@@ -263,7 +263,7 @@
     let playing = false;
     let userPaused = false;
 
-    // === Добавлено: Web Audio API для iOS ===
+ 
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
     const track = audioCtx.createMediaElementSource(audio);
@@ -301,7 +301,7 @@
       }
     });
 
-    // === ползунок управляет gainNode ===
+  // звук
     volumeSlider.addEventListener('input', () => {
       gainNode.gain.value = volumeSlider.value;
     });
@@ -326,7 +326,7 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-   // <!-- === Кровавые капли вместо сакуры === -->
+   // капельки
   const canvas = document.getElementById('sakura-canvas');
   const ctx = canvas.getContext('2d');
   let W = window.innerWidth;
@@ -534,6 +534,7 @@ const statusTimings = [0,15,18,20,21.7,23,24,25,27,29,31,32,34,36,38,40,41.5,43,
 
 </body>
 </html>
+
 
 
 
